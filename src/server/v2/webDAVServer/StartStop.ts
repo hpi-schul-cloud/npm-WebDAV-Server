@@ -4,12 +4,19 @@ import { Errors } from '../../../Errors'
 import * as https from 'https'
 import * as http from 'http'
 
-export function executeRequest(req : http.IncomingMessage, res : http.ServerResponse, rootPath ?: string) : void
+interface Request extends http.IncomingMessage {
+    ignoredPrefix ?: string
+}
+
+export function executeRequest(req : Request, res : http.ServerResponse, rootPath ?: string) : void
 {
     let method : HTTPMethod = this.methods[this.normalizeMethodName(req.method)];
     if(!method)
         method = this.unknownMethod;
-
+        if(req.url.startsWith('/files/')){
+            req.ignoredPrefix = req.url.split('/').slice(0,3).join('/')
+            req.url = req.url.split('/').slice(3).join('/')
+        }
     HTTPRequestContext.create(this, req, res, rootPath, (e, base) => {
         if(e)
         {

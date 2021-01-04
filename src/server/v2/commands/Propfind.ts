@@ -155,6 +155,14 @@ export default class implements HTTPMethod
                     {
                         if(el)
                         {
+                            for (const attribute in el.attributes){
+                                // fixing namespace issue where the namespace was written with a ":" at the end, breaking URI rules
+                                if (attribute.includes('xmlns:')){
+                                    const namespaceKey = attribute.slice(6);
+                                    const namespace = el.attributes[attribute];
+                                    el.name = el.name.replace(namespace, namespaceKey+':')
+                                }
+                            }
                             prop.add(el);
                         }
                     }
@@ -178,6 +186,19 @@ export default class implements HTTPMethod
                 };
         }
 
+        function mustDisplayTagOC(name : string)
+        {
+            if(reqBody.mustDisplay('http://owncloud.org/ns' + name))
+                tags[name] = {
+                    el: prop.ele('oc:' + name),
+                    value: reqBody.mustDisplayValue('oc:' + name)
+                };
+            else
+                tags[name] = {
+                    value: false
+                };
+        }
+
         mustDisplayTag('getlastmodified')
         mustDisplayTag('lockdiscovery')
         mustDisplayTag('supportedlock')
@@ -185,6 +206,14 @@ export default class implements HTTPMethod
         mustDisplayTag('resourcetype')
         mustDisplayTag('displayname')
         mustDisplayTag('getetag')
+
+        mustDisplayTagOC('permissions')
+        mustDisplayTagOC('id')
+        //mustDisplayTagOC('data-fingerprint')
+        //mustDisplayTagOC('share-types')
+        //mustDisplayTagOC('downloadURL')
+        //mustDisplayTagOC('dDC')
+        //mustDisplayTagOC('checksums')
 
         function displayValue(values : string[] | string, fn : () => void)
         {
@@ -194,6 +223,49 @@ export default class implements HTTPMethod
                 process.nextTick(fn);
             }
         }
+
+        displayValue('permissions', () =>
+        {
+            tags.permissions.el.add('RDNVCK');
+            nbOut(null);
+        })
+
+        displayValue('id', () =>
+        {
+            tags.id.el.add('00000009oc9yfa4s8p7l');
+            nbOut(null);
+        })
+
+        // might be added later:
+        //displayValue('data-fingerprint', () =>
+        //{
+        //    tags['data-fingerprint'].el.add('');
+        //    nbOut(null);
+        //})
+
+        //displayValue('share-types', () =>
+        //{
+        //    tags['share-types'].el.add('');
+        //    nbOut(null);
+        //})
+
+        //displayValue('downloadURL', () =>
+        //{
+        //    tags.downloadURL.el.add('');
+        //    nbOut(null);
+        //})
+
+        //displayValue('dDC', () =>
+        //{
+        //    tags.dDC.el.add('');
+        //    nbOut(null);
+        //})
+
+        //displayValue('checksums', () =>
+        //{
+        //    tags.checksums.el.add('');
+        //    nbOut(null);
+        //})
 
         displayValue('creationdate', () =>
         {
@@ -382,7 +454,9 @@ export default class implements HTTPMethod
         ctx.getResource((e, resource) => {
             ctx.checkIfHeader(resource, () => {
                 const multistatus = new XMLElementBuilder('D:multistatus', {
-                    'xmlns:D': 'DAV:'
+                    'xmlns:D': 'DAV:',
+                    'xmlns:oc' : 'http://owncloud.org/ns',
+                    'xmlns:s' : 'http://sabredav.org/ns'
                 })
                 
                 const done = (multistatus) =>

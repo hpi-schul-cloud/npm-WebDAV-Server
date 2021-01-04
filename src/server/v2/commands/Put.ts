@@ -50,7 +50,10 @@ export default class implements HTTPMethod
                                 else
                                     ctx.setCode(HTTPCodes.OK);
                                 //ctx.invokeEvent('write', r);
-                                callback();
+                                r.etag((e, etag) => {
+                                    ctx.response.setHeader('ETag', etag)
+                                    callback();
+                                })
                             });
                             wStream.on('error', (e) => {
                                 if(!ctx.setCodeFromError(e))

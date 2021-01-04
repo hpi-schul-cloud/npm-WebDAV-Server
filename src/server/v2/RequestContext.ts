@@ -117,13 +117,15 @@ export class RequestContext
     headers : RequestContextHeaders
     server : WebDAVServer
     user : IUser
+    ignoredPrefix: string
     
-    protected constructor(server : WebDAVServer, uri : string, headers : { [name : string] : string | string[] }, rootPath ?: string)
+    protected constructor(server : WebDAVServer, uri : string, headers : { [name : string] : string | string[] }, rootPath ?: string, ignoredPrefix?: string)
     {
         this.overridePrivileges = false;
         this.rootPath = rootPath;
         this.headers = new RequestContextHeaders(headers);
         this.server = server;
+        this.ignoredPrefix = ignoredPrefix || '';
         
         uri = url.parse(uri).pathname;
         uri = uri ? uri : '';
@@ -164,15 +166,16 @@ export class RequestContext
         return this.server.getResourceSync(this, path);
     }
 
+    // must only be called when writing the href-Tag
     fullUri(uri : string = null) : string
     {
         if(!uri)
-            uri = this.requested.uri;
+            uri = this.ignoredPrefix + this.requested.uri;
 
         if(this.server.options.respondWithPaths)
-            return this.rootPath ? this.rootPath + uri : uri;
+            return this.rootPath ? this.rootPath + this.ignoredPrefix + uri : this.ignoredPrefix +uri;
         else
-            return (this.prefixUri() + uri).replace(/([^:])\/\//g, '$1/');
+            return (this.prefixUri() + this.ignoredPrefix + uri).replace(/([^:])\/\//g, '$1/');
     }
 
     prefixUri() : string
@@ -212,7 +215,9 @@ export class ExternalRequestContext extends RequestContext
         return ctx;
     }
 }
-
+interface Request extends http.IncomingMessage {
+    ignoredPrefix?: string
+}
 export class HTTPRequestContext extends RequestContext
 {
     responseBody : string
@@ -225,9 +230,10 @@ export class HTTPRequestContext extends RequestContext
         request : http.IncomingMessage,
         response : http.ServerResponse,
         exit : () => void,
-        rootPath ?: string
+        rootPath ?: string,
+        ignoredPrefix ?: string,
     ) {
-        super(server, request.url, request.headers, rootPath);
+        super(server, request.url, request.headers, rootPath, ignoredPrefix);
 
         this.responseBody = undefined;
         this.response = response;
@@ -242,14 +248,15 @@ export class HTTPRequestContext extends RequestContext
         }
     }
 
-    static create(server : WebDAVServer, request : http.IncomingMessage, response : http.ServerResponse, callback : (error : Error, ctx : HTTPRequestContext) => void) : void
-    static create(server : WebDAVServer, request : http.IncomingMessage, response : http.ServerResponse, rootPath : string, callback : (error : Error, ctx : HTTPRequestContext) => void) : void
-    static create(server : WebDAVServer, request : http.IncomingMessage, response : http.ServerResponse, _rootPath : string | ((error : Error, ctx : HTTPRequestContext) => void), _callback ?: (error : Error, ctx : HTTPRequestContext) => void) : void
+    static create(server : WebDAVServer, request : Request, response : http.ServerResponse, callback : (error : Error, ctx : HTTPRequestContext) => void) : void
+    static create(server : WebDAVServer, request : Request, response : http.ServerResponse, rootPath : string, callback : (error : Error, ctx : HTTPRequestContext) => void) : void
+    static create(server : WebDAVServer, request : Request, response : http.ServerResponse, rootPath : string, callback : (error : Error, ctx : HTTPRequestContext) => void) : void
+    static create(server : WebDAVServer, request : Request, response : http.ServerResponse, _rootPath : string | ((error : Error, ctx : HTTPRequestContext) => void), _callback ?: (error : Error, ctx : HTTPRequestContext) => void) : void
     {
         const rootPath = _callback ? _rootPath as string : undefined;
         const callback = _callback ? _callback : _rootPath as ((error : Error, ctx : HTTPRequestContext) => void);
 
-        const ctx = new HTTPRequestContext(server, request, response, null, rootPath);
+        const ctx = new HTTPRequestContext(server, request, response, null, rootPath, request.ignoredPrefix);
         response.setHeader('DAV', '1,2');
         response.setHeader('Access-Control-Allow-Origin', '*');
         response.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -383,14 +390,14 @@ export class HTTPRequestContext extends RequestContext
         {
             default:
             case 'xml':
-                this.response.setHeader('Content-Type', 'application/xml;charset=utf-8');
+                this.response.setHeader('Content-Type', 'application/xml; charset=utf-8');
                 this.response.setHeader('Content-Length', Buffer.from(content).length.toString());
                 this.response.write(content, 'UTF-8');
                 break;
                 
             case 'json':
                 content = XML.toJSON(content);
-                this.response.setHeader('Content-Type', 'application/json;charset=utf-8');
+                this.response.setHeader('Content-Type', 'application/json; charset=utf-8');
                 this.response.setHeader('Content-Length', Buffer.from(content).length.toString());
                 this.response.write(content, 'UTF-8');
                 break;
