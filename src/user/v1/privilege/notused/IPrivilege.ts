@@ -1,9 +1,7 @@
+export interface IPrivilege {
+	description: string;
+	isAbstract: boolean;
+	name: string;
 
-export interface IPrivilege
-{
-    description : string;
-    isAbstract : boolean;
-    name : string;
-
-    can(operation : string) : boolean;
+	can(operation: string): boolean;
 }

@@ -1,4 +1,4 @@
-version: "2"
+version: '2'
 plugins:
   eslint:
     enabled: true
@@ -15,9 +15,9 @@ checks:
     config:
       threshold: 9
 exclude_patterns:
-  - "lib/"
-  - "test/"
-  - "examples/"
-  - "src/**/v1/"
-  - "src/**/v2/**/ContextualFileSystem.ts"
-  - "src/**/v2/**/Resource.ts"
+  - 'lib/'
+  - 'test/'
+  - 'examples/'
+  - 'src/**/v1/'
+  - 'src/**/v2/**/ContextualFileSystem.ts'
+  - 'src/**/v2/**/Resource.ts'

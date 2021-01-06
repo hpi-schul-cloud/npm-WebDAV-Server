@@ -1,181 +1,162 @@
-import { ResourceTesterOptions, ResourceTesterProducer, ResourceTesterProducerCallback, ResourceTesterTestCallback } from './Types'
-import { IResource } from '../../IResource'
-import * as actions from './Actions'
-import * as children from './Children'
-import * as content from './Content'
-import * as locks from './Locks'
-import * as properties from './Properties'
-import * as stdMetaData from './StdMetaData'
+import {
+	ResourceTesterOptions,
+	ResourceTesterProducer,
+	ResourceTesterProducerCallback,
+	ResourceTesterTestCallback,
+} from './Types';
+import { IResource } from '../../IResource';
+import * as actions from './Actions';
+import * as children from './Children';
+import * as content from './Content';
+import * as locks from './Locks';
+import * as properties from './Properties';
+import * as stdMetaData from './StdMetaData';
 
-class DefaultResourceTesterOptions implements ResourceTesterOptions
-{
-    canHaveVirtualFolderChildren  = true
-    canHaveVirtualFileChildren  = true
-    canGetLastModifiedDate  = true
-    canGetCreationDate  = true
-    canRemoveChildren  = true
-    canHaveChildren  = true
-    canGetChildren  = true
-    canGetMimeType  = true
-    canBeCreated  = true
-    canBeDeleted  = true
-    canBeRenamed  = true
-    canGetSize  = true
-    canBeMoved  = true
-    canWrite  = true
-    canRead  = true
-    canLock  = true
+class DefaultResourceTesterOptions implements ResourceTesterOptions {
+	canHaveVirtualFolderChildren = true;
+	canHaveVirtualFileChildren = true;
+	canGetLastModifiedDate = true;
+	canGetCreationDate = true;
+	canRemoveChildren = true;
+	canHaveChildren = true;
+	canGetChildren = true;
+	canGetMimeType = true;
+	canBeCreated = true;
+	canBeDeleted = true;
+	canBeRenamed = true;
+	canGetSize = true;
+	canBeMoved = true;
+	canWrite = true;
+	canRead = true;
+	canLock = true;
 }
 
-export class ResourceTester<T extends IResource>
-{
-    protected static uuid = 0;
+export class ResourceTester<T extends IResource> {
+	protected static uuid = 0;
 
-    constructor(
-        public options : ResourceTesterOptions,
-        public producer : ResourceTesterProducer<T>)
-    {
-        const def = new DefaultResourceTesterOptions();
-        for(const name of Object.keys(def))
-            if(this.options[name] === undefined)
-                this.options[name] = def[name];
-    }
+	constructor(public options: ResourceTesterOptions, public producer: ResourceTesterProducer<T>) {
+		const def = new DefaultResourceTesterOptions();
+		for (const name of Object.keys(def)) if (this.options[name] === undefined) this.options[name] = def[name];
+	}
 
-    protected uuid()
-    {
-        return ++ResourceTester.uuid;
-    }
+	protected uuid() {
+		return ++ResourceTester.uuid;
+	}
 
-    protected multiple(callback : ResourceTesterTestCallback, nb : number) : ResourceTesterTestCallback
-    {
-        return (error : Error, isValid : boolean, text : string, mustBeValid  = true, cbNext ?: () => void) => {
-            if(nb <= 0)
-                return;
-            if(!mustBeValid)
-            {
-                if(error || !isValid)
-                {
-                    error = null;
-                    isValid = true;
-                }
-                else
-                {
-                    error = new Error('It was supposed to fail');
-                    isValid = false;
-                }
-            }
-            if(error)
-            {
-                nb = -1;
-                callback(error, false, text);
-                return;
-            }
-            if(!isValid)
-            {
-                callback(error, false, text);
-                return;
-            }
-            if(cbNext)
-            {
-                cbNext();
-                return;
-            }
-            --nb;
-            if(nb === 0)
-                callback(null, isValid, text);
-        }
-    }
+	protected multiple(callback: ResourceTesterTestCallback, nb: number): ResourceTesterTestCallback {
+		return (error: Error, isValid: boolean, text: string, mustBeValid = true, cbNext?: () => void) => {
+			if (nb <= 0) return;
+			if (!mustBeValid) {
+				if (error || !isValid) {
+					error = null;
+					isValid = true;
+				} else {
+					error = new Error('It was supposed to fail');
+					isValid = false;
+				}
+			}
+			if (error) {
+				nb = -1;
+				callback(error, false, text);
+				return;
+			}
+			if (!isValid) {
+				callback(error, false, text);
+				return;
+			}
+			if (cbNext) {
+				cbNext();
+				return;
+			}
+			--nb;
+			if (nb === 0) callback(null, isValid, text);
+		};
+	}
 
-    run(callback : (results : any) => void)
-    {
-        let nb = 0;
+	run(callback: (results: any) => void) {
+		let nb = 0;
 
-        const results = {
-            all: {
-                isValid: true,
-                errors: []
-            }
-        };
-        function end(name : string)
-        {
-            return (error : Error, isValid : boolean, text : string) => {
-                results[name] = {
-                    error,
-                    text,
-                    isValid
-                };
+		const results = {
+			all: {
+				isValid: true,
+				errors: [],
+			},
+		};
+		function end(name: string) {
+			return (error: Error, isValid: boolean, text: string) => {
+				results[name] = {
+					error,
+					text,
+					isValid,
+				};
 
-                if(error || !isValid)
-                {
-                    results.all.isValid = false;
-                    results.all.errors.push({
-                        error,
-                        text,
-                        toString()
-                        {
-                            return '[' + name + '] ' + this.text + (this.error ? ' : ' + this.error : '');
-                        }
-                    });
-                }
-                
-                --nb;
-                if(nb === 0)
-                    callback(results);
-            }
-        }
-        const test = (name : string) =>
-        {
-            ++nb;
-            process.nextTick(() => this[name](end(name)));
-        }
+				if (error || !isValid) {
+					results.all.isValid = false;
+					results.all.errors.push({
+						error,
+						text,
+						toString() {
+							return '[' + name + '] ' + this.text + (this.error ? ' : ' + this.error : '');
+						},
+					});
+				}
 
-        test('create');
-        test('delete');
-        test('moveTo');
-        test('rename');
-        test('writeRead');
-        test('mimeType');
-        test('size');
-        test('lock');
-        test('addChild');
-        test('removeChild');
-        test('getChildren');
-        test('setProperty');
-        test('removeProperty');
-        test('getProperties');
-        test('creationDate');
-        test('lastModifiedDate');
-        test('webName');
-        test('type');
-    }
+				--nb;
+				if (nb === 0) callback(results);
+			};
+		}
+		const test = (name: string) => {
+			++nb;
+			process.nextTick(() => this[name](end(name)));
+		};
 
-    // ****************************** Actions ****************************** //
-    protected create = actions.create
-    protected delete = actions.deleteResource
-    protected moveTo = actions.moveTo
-    protected rename = actions.rename
-    
-    // ****************************** Content ****************************** //
-    protected writeRead = content.writeRead
-    protected mimeType = content.mimeType
-    protected size = content.size
-    
-    // ****************************** Locks ****************************** //
-    protected lock = locks.lock
+		test('create');
+		test('delete');
+		test('moveTo');
+		test('rename');
+		test('writeRead');
+		test('mimeType');
+		test('size');
+		test('lock');
+		test('addChild');
+		test('removeChild');
+		test('getChildren');
+		test('setProperty');
+		test('removeProperty');
+		test('getProperties');
+		test('creationDate');
+		test('lastModifiedDate');
+		test('webName');
+		test('type');
+	}
 
-    // ****************************** Children ****************************** //
-    protected addChild = children.addChild
-    protected removeChild = children.removeChild
-    protected getChildren = children.getChildren
+	// ****************************** Actions ****************************** //
+	protected create = actions.create;
+	protected delete = actions.deleteResource;
+	protected moveTo = actions.moveTo;
+	protected rename = actions.rename;
 
-    // ****************************** Properties ****************************** //
-    protected setProperty = properties.setProperty
-    protected removeProperty = properties.removeProperty
-    protected getProperties = properties.getProperties
-    
-    // ****************************** Std meta-data ****************************** //
-    protected creationDate = stdMetaData.creationDate
-    protected lastModifiedDate = stdMetaData.lastModifiedDate
-    protected webName = stdMetaData.webName
-    protected type = stdMetaData.type
+	// ****************************** Content ****************************** //
+	protected writeRead = content.writeRead;
+	protected mimeType = content.mimeType;
+	protected size = content.size;
+
+	// ****************************** Locks ****************************** //
+	protected lock = locks.lock;
+
+	// ****************************** Children ****************************** //
+	protected addChild = children.addChild;
+	protected removeChild = children.removeChild;
+	protected getChildren = children.getChildren;
+
+	// ****************************** Properties ****************************** //
+	protected setProperty = properties.setProperty;
+	protected removeProperty = properties.removeProperty;
+	protected getProperties = properties.getProperties;
+
+	// ****************************** Std meta-data ****************************** //
+	protected creationDate = stdMetaData.creationDate;
+	protected lastModifiedDate = stdMetaData.lastModifiedDate;
+	protected webName = stdMetaData.webName;
+	protected type = stdMetaData.type;
 }

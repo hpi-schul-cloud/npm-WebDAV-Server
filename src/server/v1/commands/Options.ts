@@ -1,9 +1,8 @@
-import { HTTPCodes, MethodCallArgs } from '../WebDAVRequest'
+import { HTTPCodes, MethodCallArgs } from '../WebDAVRequest';
 
-export default function(arg : MethodCallArgs, callback)
-{
-    arg.noBodyExpected(() => {
-        arg.setCode(HTTPCodes.OK);
-        callback();
-    })
+export default function (arg: MethodCallArgs, callback) {
+	arg.noBodyExpected(() => {
+		arg.setCode(HTTPCodes.OK);
+		callback();
+	});
 }

@@ -1,16 +1,14 @@
-import { IUser } from '../IUser'
+import { IUser } from '../IUser';
 
-export class SimpleUser implements IUser
-{
-    uid : string
+export class SimpleUser implements IUser {
+	uid: string;
 
-    constructor(
-        public username : string,
-        public password : string,
-        public isAdministrator : boolean,
-        public isDefaultUser : boolean
-    )
-    {
-        this.uid = username;
-    }
+	constructor(
+		public username: string,
+		public password: string,
+		public isAdministrator: boolean,
+		public isDefaultUser: boolean
+	) {
+		this.uid = username;
+	}
 }

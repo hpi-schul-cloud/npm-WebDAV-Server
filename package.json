@@ -1,64 +1,67 @@
 {
-  "devWatch": {
-    "cmd": "dev",
-    "runs": [
-      {
-        "type": "typescript",
-        "browserify": false,
-        "configFile": "tsconfig.json",
-        "declarations": true
-      }
-    ]
-  },
-  "engines": {
-    "node": ">= 4"
-  },
-  "main": "./lib/index",
-  "keywords": [
-    "webdav-server",
-    "webdav",
-    "server",
-    "virtual"
-  ],
-  "scripts": {
-    "prepare": "npm run build",
-    "dev": "tsc --declaration -w",
-    "build": "tsc --declaration",
-    "lint": "eslint . --ignore-path .gitignore --ext .ts",
-    "lint-fix": "eslint . --fix --ignore-path .gitignore --ext .ts",
-    "test": "npm run build-test && npm run start-test",
-    "start-test": "node test/v2/root.js && node test/v1/root.js",
-    "build-test": "cd test/v2/tests.ts && tsc"
-  },
-  "name": "@hpi-schul-cloud/webdav-server",
-  "version": "2.7.0",
-  "author": "Adrien Castex <adrien.castex@protonmail.com>",
-  "license": "Unlicense",
-  "homepage": "https://github.com/hpi-schul-cloud/npm-WebDAV-Server",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hpi-schul-cloud/npm-WebDAV-Server.git"
-  },
-  "description": "WebDAV Server",
-  "dependencies": {
-    "mime-types": "^2.1.18",
-    "xml-js-builder": "^1.0.3"
-  },
-  "devDependencies": {
-    "@types/mime-types": "^2.1.0",
-    "@types/node": "^7.0.64",
-    "@types/request": "0.0.44",
-    "@typescript-eslint/eslint-plugin": "^4.12.0",
-    "@typescript-eslint/parser": "^4.12.0",
-    "eslint": "^7.17.0",
-    "eslint-plugin-import": "^2.22.1",
-    "express": "^4.16.4",
-    "form-data": "^3.0.0",
-    "request": "^2.85.0",
-    "safe-regex": "^1.1.0",
-    "typescript": "^3.7.2",
-    "webdav-fs": "^1.10.1",
-    "xml-js": "^1.4.1"
-  },
-  "types": "./lib/index.d.ts"
+	"devWatch": {
+		"cmd": "dev",
+		"runs": [
+			{
+				"type": "typescript",
+				"browserify": false,
+				"configFile": "tsconfig.json",
+				"declarations": true
+			}
+		]
+	},
+	"engines": {
+		"node": ">= 4"
+	},
+	"main": "./lib/index",
+	"keywords": [
+		"webdav-server",
+		"webdav",
+		"server",
+		"virtual"
+	],
+	"scripts": {
+		"prepare": "npm run build",
+		"dev": "tsc --declaration -w",
+		"build": "tsc --declaration",
+		"lint": "eslint . --ignore-path .gitignore --ext .ts",
+		"lint-fix": "eslint . --fix --ignore-path .gitignore --ext .ts",
+		"test": "npm run build-test && npm run start-test",
+		"start-test": "node test/v2/root.js && node test/v1/root.js",
+		"build-test": "cd test/v2/tests.ts && tsc"
+	},
+	"name": "@hpi-schul-cloud/webdav-server",
+	"version": "2.7.0",
+	"author": "Adrien Castex <adrien.castex@protonmail.com>",
+	"license": "Unlicense",
+	"homepage": "https://github.com/hpi-schul-cloud/npm-WebDAV-Server",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hpi-schul-cloud/npm-WebDAV-Server.git"
+	},
+	"description": "WebDAV Server",
+	"dependencies": {
+		"mime-types": "^2.1.18",
+		"xml-js-builder": "^1.0.3"
+	},
+	"devDependencies": {
+		"@types/mime-types": "^2.1.0",
+		"@types/node": "^7.0.64",
+		"@types/request": "0.0.44",
+		"@typescript-eslint/eslint-plugin": "^4.12.0",
+		"@typescript-eslint/parser": "^4.12.0",
+		"eslint": "^7.17.0",
+		"eslint-config-prettier": "^7.1.0",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-prettier": "^3.3.1",
+		"express": "^4.16.4",
+		"form-data": "^3.0.0",
+		"prettier": "^2.2.1",
+		"request": "^2.85.0",
+		"safe-regex": "^1.1.0",
+		"typescript": "^3.7.2",
+		"webdav-fs": "^1.10.1",
+		"xml-js": "^1.4.1"
+	},
+	"types": "./lib/index.d.ts"
 }

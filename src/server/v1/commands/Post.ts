@@ -1,3 +1,2 @@
-
-import Put from './Put'
-export default Put
+import Put from './Put';
+export default Put;

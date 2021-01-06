@@ -1,6 +1,5 @@
-import { IUser } from './IUser'
+import { IUser } from './IUser';
 
-export interface IUserManager
-{
-    getDefaultUser(callback : (user : IUser) => void)
+export interface IUserManager {
+	getDefaultUser(callback: (user: IUser) => void);
 }
