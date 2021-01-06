@@ -11,7 +11,7 @@ class RangedStream extends Transform {
 		this.nb = 0;
 	}
 
-	_transform(chunk: string | Buffer, encoding: string, callback: Function) {
+	_transform(chunk: string | Buffer, encoding: string, callback: (_: any, chunk: string | Buffer) => void) {
 		if (this.nb < this.min) {
 			const lastNb = this.nb;
 			this.nb += chunk.length;
@@ -44,7 +44,7 @@ class MultipleRangedStream extends Transform {
 		}));
 	}
 
-	_transform(chunk: string | Buffer, encoding: string, callback: Function) {
+	_transform(chunk: string | Buffer, encoding: string, callback: (_: any, chunk: string | Buffer) => void) {
 		this.streams.forEach((streamRange) => {
 			streamRange.stream.write(chunk, encoding);
 		});
@@ -52,7 +52,7 @@ class MultipleRangedStream extends Transform {
 		callback(null, Buffer.alloc(0));
 	}
 
-	end(chunk?: any, encoding?: any, cb?: Function): void {
+	end(chunk?: any, encoding?: any, cb?: (...args: any[]) => void): void {
 		if (this.onEnded) process.nextTick(() => this.onEnded());
 		super.end(chunk, encoding, cb);
 	}
