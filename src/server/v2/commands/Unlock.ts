@@ -40,47 +40,47 @@ export default class implements HTTPMethod
                             return;
                         }*/
 
-                        r.lockManager((e, lm) => {
-                            if(e)
+                    r.lockManager((e, lm) => {
+                        if(e)
+                        {
+                            if(!ctx.setCodeFromError(e))
+                                ctx.setCode(HTTPCodes.InternalServerError)
+                            return callback();
+                        }
+                            
+                        lm.getLock(token, (e, lock) => {
+                            if(e || !lock)
                             {
-                                if(!ctx.setCodeFromError(e))
+                                if(!lock)
+                                    ctx.setCode(HTTPCodes.Conflict)
+                                else if(!ctx.setCodeFromError(e))
                                     ctx.setCode(HTTPCodes.InternalServerError)
                                 return callback();
                             }
-                            
-                            lm.getLock(token, (e, lock) => {
-                                if(e || !lock)
+
+                            if(!!lock.userUid && lock.userUid !== ctx.user.uid)
+                            {
+                                ctx.setCode(HTTPCodes.Forbidden);
+                                return callback();
+                            }
+
+                            lm.removeLock(lock.uuid, (e, done) => {
+                                if(e || !done)
                                 {
-                                    if(!lock)
-                                        ctx.setCode(HTTPCodes.Conflict)
+                                    if(!done)
+                                        ctx.setCode(HTTPCodes.Forbidden);
                                     else if(!ctx.setCodeFromError(e))
                                         ctx.setCode(HTTPCodes.InternalServerError)
-                                    return callback();
                                 }
-
-                                if(!!lock.userUid && lock.userUid !== ctx.user.uid)
+                                else
                                 {
-                                    ctx.setCode(HTTPCodes.Forbidden);
-                                    return callback();
+                                    //ctx.invokeEvent('unlock', r, lock);
+                                    ctx.setCode(HTTPCodes.NoContent);
                                 }
-
-                                lm.removeLock(lock.uuid, (e, done) => {
-                                    if(e || !done)
-                                    {
-                                        if(!done)
-                                            ctx.setCode(HTTPCodes.Forbidden);
-                                        else if(!ctx.setCodeFromError(e))
-                                            ctx.setCode(HTTPCodes.InternalServerError)
-                                    }
-                                    else
-                                    {
-                                        //ctx.invokeEvent('unlock', r, lock);
-                                        ctx.setCode(HTTPCodes.NoContent);
-                                    }
-                                    callback();
-                                })
+                                callback();
                             })
                         })
+                    })
                     //})
                 })
             })

@@ -7,17 +7,17 @@ export type PrivilegeManagerMethod = (fullPath : Path, user : IUser, resource : 
 
 export type BasicPrivilege = 
       'canWrite'
-        | 'canWriteLocks'
-        | 'canWriteContent'
-            | 'canWriteContentTranslated'
-            | 'canWriteContentSource'
-        | 'canWriteProperties'
-    | 'canRead'
-        | 'canReadLocks'
-        | 'canReadContent'
-            | 'canReadContentTranslated'
-            | 'canReadContentSource'
-        | 'canReadProperties'
+      | 'canWriteLocks'
+      | 'canWriteContent'
+      | 'canWriteContentTranslated'
+      | 'canWriteContentSource'
+      | 'canWriteProperties'
+      | 'canRead'
+      | 'canReadLocks'
+      | 'canReadContent'
+      | 'canReadContentTranslated'
+      | 'canReadContentSource'
+      | 'canReadProperties'
 
 function checkAll(pm : PrivilegeManager, fns : PrivilegeManagerMethod[], fullPath : Path, user : IUser, resource : Resource, callback : PrivilegeManagerCallback)
 {

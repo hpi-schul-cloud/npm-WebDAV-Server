@@ -48,7 +48,7 @@ export class LocalPropertyManager implements IPropertyManager
         callback(null);
     }
 
-    getProperties(callback : ReturnCallback<PropertyBag>, byCopy : boolean = false) : void
+    getProperties(callback : ReturnCallback<PropertyBag>, byCopy  = false) : void
     {
         callback(null, byCopy ? this.properties : JSON.parse(JSON.stringify(this.properties)));
     }

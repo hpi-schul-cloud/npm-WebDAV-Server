@@ -10,7 +10,7 @@ export default ((info, isValid) =>
     for(let i = 0; i < cx.length; ++i)
         cx.write('X', i, 1, 'utf-8');
     const content = cx.toString();
-    let index = 0;
+    const index = 0;
     const stream = new Readable({
         read(size ?: number)
         {

@@ -9,22 +9,22 @@ import * as stdMetaData from './StdMetaData'
 
 class DefaultResourceTesterOptions implements ResourceTesterOptions
 {
-    canHaveVirtualFolderChildren : boolean = true
-    canHaveVirtualFileChildren : boolean = true
-    canGetLastModifiedDate : boolean = true
-    canGetCreationDate : boolean = true
-    canRemoveChildren : boolean = true
-    canHaveChildren : boolean = true
-    canGetChildren : boolean = true
-    canGetMimeType : boolean = true
-    canBeCreated : boolean = true
-    canBeDeleted : boolean = true
-    canBeRenamed : boolean = true
-    canGetSize : boolean = true
-    canBeMoved : boolean = true
-    canWrite : boolean = true
-    canRead : boolean = true
-    canLock : boolean = true
+    canHaveVirtualFolderChildren  = true
+    canHaveVirtualFileChildren  = true
+    canGetLastModifiedDate  = true
+    canGetCreationDate  = true
+    canRemoveChildren  = true
+    canHaveChildren  = true
+    canGetChildren  = true
+    canGetMimeType  = true
+    canBeCreated  = true
+    canBeDeleted  = true
+    canBeRenamed  = true
+    canGetSize  = true
+    canBeMoved  = true
+    canWrite  = true
+    canRead  = true
+    canLock  = true
 }
 
 export class ResourceTester<T extends IResource>
@@ -48,7 +48,7 @@ export class ResourceTester<T extends IResource>
 
     protected multiple(callback : ResourceTesterTestCallback, nb : number) : ResourceTesterTestCallback
     {
-        return (error : Error, isValid : boolean, text : string, mustBeValid : boolean = true, cbNext ?: () => void) => {
+        return (error : Error, isValid : boolean, text : string, mustBeValid  = true, cbNext ?: () => void) => {
             if(nb <= 0)
                 return;
             if(!mustBeValid)

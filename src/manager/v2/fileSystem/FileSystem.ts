@@ -268,20 +268,20 @@ export abstract class FileSystem implements ISerializableFileSystem
         issuePrivilegeCheck(this, ctx, path, 'canWrite', callback, () => {
             const go = () => {
                 ctx.server.options.storageManager.evaluateCreate(ctx, this, path, type, (size) => {
-                ctx.server.options.storageManager.reserve(ctx, this, size, (reserved) => {
-                    if(!reserved)
-                        return callback(Errors.InsufficientStorage);
+                    ctx.server.options.storageManager.reserve(ctx, this, size, (reserved) => {
+                        if(!reserved)
+                            return callback(Errors.InsufficientStorage);
 
-                    this._create(path, {
-                        context: ctx,
-                        type
-                    }, (e) => {
-                        if(e)
-                            ctx.server.options.storageManager.reserve(ctx, this, -size, () => callback(e));
-                        else
-                            callback();
-                    });
-                })
+                        this._create(path, {
+                            context: ctx,
+                            type
+                        }, (e) => {
+                            if(e)
+                                ctx.server.options.storageManager.reserve(ctx, this, -size, () => callback(e));
+                            else
+                                callback();
+                        });
+                    })
                 })
             }
 
@@ -444,11 +444,11 @@ export abstract class FileSystem implements ISerializableFileSystem
                             {
                                 this.type(ctx, path, (e, type) => {
                                     ctx.server.options.storageManager.evaluateContent(ctx, this, contentSize, (reservedContentSize) => {
-                                    ctx.server.options.storageManager.evaluateCreate(ctx, this, path, type, (size) => {
-                                        ctx.server.options.storageManager.reserve(ctx, this, -size - reservedContentSize, () => {
-                                            callback();
+                                        ctx.server.options.storageManager.evaluateCreate(ctx, this, path, type, (size) => {
+                                            ctx.server.options.storageManager.reserve(ctx, this, -size - reservedContentSize, () => {
+                                                callback();
+                                            })
                                         })
-                                    })
                                     })
                                 })
                             }
@@ -698,11 +698,11 @@ export abstract class FileSystem implements ISerializableFileSystem
                             else
                             {
                                 ctx.server.options.storageManager.evaluateContent(ctx, this, estimatedSize, (estimatedSizeStored) => {
-                                ctx.server.options.storageManager.reserve(ctx, this, estimatedSizeStored - sizeStored, (reserved) => {
-                                    if(!reserved)
-                                        return callback(Errors.InsufficientStorage);
-                                    finalGo(callback);
-                                })
+                                    ctx.server.options.storageManager.reserve(ctx, this, estimatedSizeStored - sizeStored, (reserved) => {
+                                        if(!reserved)
+                                            return callback(Errors.InsufficientStorage);
+                                        finalGo(callback);
+                                    })
                                 })
                             }
                         })
@@ -910,38 +910,38 @@ export abstract class FileSystem implements ISerializableFileSystem
         this.emit('before-move', ctx, pathFrom, { pathFrom, pathTo, overwrite })
 
         issuePrivilegeCheck(this, ctx, pathFrom, 'canRead', callback, () => {
-        issuePrivilegeCheck(this, ctx, pathTo, 'canWrite', callback, () => {
-            this.isLocked(ctx, pathFrom, (e, isLocked) => {
-                if(e || isLocked)
-                    return callback(e ? e : Errors.Locked);
+            issuePrivilegeCheck(this, ctx, pathTo, 'canWrite', callback, () => {
+                this.isLocked(ctx, pathFrom, (e, isLocked) => {
+                    if(e || isLocked)
+                        return callback(e ? e : Errors.Locked);
 
                     this.isLocked(ctx, pathTo, (e, isLocked) => {
                         if(e || isLocked)
                             return callback(e ? e : Errors.Locked);
 
-                    const go = () =>
-                    {
-                        if(this._move)
+                        const go = () =>
                         {
-                            this._move(pathFrom, pathTo, {
-                                context: ctx,
-                                overwrite
-                            }, callback);
-                            return;
+                            if(this._move)
+                            {
+                                this._move(pathFrom, pathTo, {
+                                    context: ctx,
+                                    overwrite
+                                }, callback);
+                                return;
+                            }
+
+                            StandardMethods.standardMove(ctx, pathFrom, this, pathTo, this, overwrite, callback);
                         }
 
-                        StandardMethods.standardMove(ctx, pathFrom, this, pathTo, this, overwrite, callback);
-                    }
-
-                    this.fastExistCheckEx(ctx, pathFrom, callback, () => {
-                        if(!overwrite)
-                            this.fastExistCheckExReverse(ctx, pathTo, callback, go);
-                        else
-                            go();
+                        this.fastExistCheckEx(ctx, pathFrom, callback, () => {
+                            if(!overwrite)
+                                this.fastExistCheckExReverse(ctx, pathTo, callback, go);
+                            else
+                                go();
+                        })
                     })
                 })
             })
-        })
         })
     }
     protected _move?(pathFrom : Path, pathTo : Path, ctx : MoveInfo, callback : ReturnCallback<boolean>) : void
@@ -1044,34 +1044,34 @@ export abstract class FileSystem implements ISerializableFileSystem
         this.emit('before-copy', ctx, pathFrom, { pathTo, overwrite, depth })
 
         issuePrivilegeCheck(this, ctx, pathFrom, 'canRead', callback, () => {
-        issuePrivilegeCheck(this, ctx, pathTo, 'canWrite', callback, () => {
-            this.isLocked(ctx, pathTo, (e, isLocked) => {
-                if(e || isLocked)
-                    return callback(e ? e : Errors.Locked);
+            issuePrivilegeCheck(this, ctx, pathTo, 'canWrite', callback, () => {
+                this.isLocked(ctx, pathTo, (e, isLocked) => {
+                    if(e || isLocked)
+                        return callback(e ? e : Errors.Locked);
 
-                const go = () =>
-                {
-                    if(this._copy)
+                    const go = () =>
                     {
-                        this._copy(pathFrom, pathTo, {
-                            context: ctx,
-                            depth,
-                            overwrite
-                        }, callback);
-                        return;
+                        if(this._copy)
+                        {
+                            this._copy(pathFrom, pathTo, {
+                                context: ctx,
+                                depth,
+                                overwrite
+                            }, callback);
+                            return;
+                        }
+
+                        StandardMethods.standardCopy(ctx, pathFrom, this, pathTo, this, overwrite, depth, callback);
                     }
 
-                    StandardMethods.standardCopy(ctx, pathFrom, this, pathTo, this, overwrite, depth, callback);
-                }
-
-                this.fastExistCheckEx(ctx, pathFrom, callback, () => {
-                    if(!overwrite)
-                        this.fastExistCheckExReverse(ctx, pathTo, callback, go);
-                    else
-                        go();
+                    this.fastExistCheckEx(ctx, pathFrom, callback, () => {
+                        if(!overwrite)
+                            this.fastExistCheckExReverse(ctx, pathTo, callback, go);
+                        else
+                            go();
+                    })
                 })
             })
-        })
         })
     }
     protected _copy?(pathFrom : Path, pathTo : Path, ctx : CopyInfo, callback : ReturnCallback<boolean>) : void
@@ -1180,27 +1180,27 @@ export abstract class FileSystem implements ISerializableFileSystem
                 else
                 {
                     this.fastExistCheckEx(ctx, pathFrom, callback, () => {
-                    this.fastExistCheckExReverse(ctx, pathFrom.getParent().getChildPath(newName), callback, () => {
-                        const newPath = pathFrom.getParent().getChildPath(newName);
-                        this.isLocked(ctx, newPath, (e, isLocked) => {
-                            if(e || isLocked)
-                                return callback(e ? e : Errors.Locked);
+                        this.fastExistCheckExReverse(ctx, pathFrom.getParent().getChildPath(newName), callback, () => {
+                            const newPath = pathFrom.getParent().getChildPath(newName);
+                            this.isLocked(ctx, newPath, (e, isLocked) => {
+                                if(e || isLocked)
+                                    return callback(e ? e : Errors.Locked);
 
-                            issuePrivilegeCheck(this, ctx, newPath, 'canWrite', callback, () => {
-                                if(this._rename)
-                                {
-                                    this._rename(pathFrom, newName, {
-                                        context: ctx,
-                                        destinationPath: newPath
-                                    }, callback);
-                                }
-                                else
-                                {
-                                    this.move(ctx, pathFrom, pathFrom.getParent().getChildPath(newName), overwrite, callback);
-                                }
+                                issuePrivilegeCheck(this, ctx, newPath, 'canWrite', callback, () => {
+                                    if(this._rename)
+                                    {
+                                        this._rename(pathFrom, newName, {
+                                            context: ctx,
+                                            destinationPath: newPath
+                                        }, callback);
+                                    }
+                                    else
+                                    {
+                                        this.move(ctx, pathFrom, pathFrom.getParent().getChildPath(newName), overwrite, callback);
+                                    }
+                                })
                             })
                         })
-                    })
                     })
                 }
             })
@@ -1719,10 +1719,8 @@ export abstract class FileSystem implements ISerializableFileSystem
             return date;
         }
     }
-    protected static neutralizeEmptyDateCallback = (callback : ReturnCallback<number>) : ReturnCallback<number> => {
-        return (e : Error, date : number) => {
-            callback(e, FileSystem.neutralizeEmptyDate(date));
-        }
+    protected static neutralizeEmptyDateCallback = (callback : ReturnCallback<number>) : ReturnCallback<number> => (e : Error, date : number) => {
+        callback(e, FileSystem.neutralizeEmptyDate(date));
     }
 
     /**
@@ -2007,7 +2005,7 @@ export abstract class FileSystem implements ISerializableFileSystem
         }
         else if(tree.constructor === String || tree.constructor === Buffer)
         {
-            const data : String | Buffer = tree as any;
+            const data : string | Buffer = tree as any;
             this.openWriteStream(ctx, rootPath, 'mustCreate', true, data.length, (e, w, created) => {
                 if(e)
                     return callback(e);

@@ -66,29 +66,29 @@ export function getProperties(callback : ResourceTesterTestCallback)
         const keys = Object.keys(values);
 
         r1.setProperty(keys[0], values[keys[0]], (e) => {
-        callback(e, !e, 'setProperty error', undefined, () => {
-        r1.setProperty(keys[1], values[keys[1]], (e) => {
-        callback(e, !e, 'setProperty error', undefined, () => {
-        r1.setProperty(keys[2], values[keys[2]], (e) => {
-        callback(e, !e, 'setProperty error', undefined, () => {
-            r1.getProperties((e, props) => {
-            callback(e, !e && !!props, 'getProperties error', undefined, () => {
-                const valid = {};
-                for(const key of keys)
-                    valid[key] = false;
+            callback(e, !e, 'setProperty error', undefined, () => {
+                r1.setProperty(keys[1], values[keys[1]], (e) => {
+                    callback(e, !e, 'setProperty error', undefined, () => {
+                        r1.setProperty(keys[2], values[keys[2]], (e) => {
+                            callback(e, !e, 'setProperty error', undefined, () => {
+                                r1.getProperties((e, props) => {
+                                    callback(e, !e && !!props, 'getProperties error', undefined, () => {
+                                        const valid = {};
+                                        for(const key of keys)
+                                            valid[key] = false;
                 
-                for(const name of Object.keys(props))
-                    if(values[name] !== undefined)
-                        valid[name] = values[name] === props[name];
+                                        for(const name of Object.keys(props))
+                                            if(values[name] !== undefined)
+                                                valid[name] = values[name] === props[name];
                 
-                callback(null, keys.every((k) => valid[k]), 'One or many properties are invalid or missing in the response of getProperties')
+                                        callback(null, keys.every((k) => valid[k]), 'One or many properties are invalid or missing in the response of getProperties')
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
             })
-            })
-        })
-        })
-        })
-        })
-        })
         })
     })
 }

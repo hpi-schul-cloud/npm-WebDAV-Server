@@ -40,7 +40,7 @@ export function requirePrivilege(privilege : string | BasicPrivilege | string[] 
     const pm = arg.server.privilegeManager;
 
     go();
-    function go(error : Error = null, hasAccess : boolean = true)
+    function go(error : Error = null, hasAccess  = true)
     {
         if(privileges.length === 0 || error || !hasAccess)
         {

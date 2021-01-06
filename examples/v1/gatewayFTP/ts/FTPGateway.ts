@@ -48,7 +48,7 @@ export class FTPGateway extends webdav.VirtualFolder
         })
     }
 
-    protected find(connection : Client, path : webdav.FSPath, callback : (error : Error, resource ?: FTPResource) => void, forceRefresh : boolean = false)
+    protected find(connection : Client, path : webdav.FSPath, callback : (error : Error, resource ?: FTPResource) => void, forceRefresh  = false)
     {
         const resource = this.cache[path.toString()];
         if(forceRefresh || !resource)

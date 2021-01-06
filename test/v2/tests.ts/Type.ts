@@ -21,12 +21,6 @@ export interface TestInfo
     expect : (nb : number) => void
 }
 
-export interface TestCallback
-{
-    (good : boolean, msg ?: string | Error, error ?: Error | string) : void
-}
+export type TestCallback = (good : boolean, msg ?: string | Error, error ?: Error | string)  => void
 
-export interface Test
-{
-    (info : TestInfo, isValid : TestCallback) : void
-}
+export type Test = (info : TestInfo, isValid : TestCallback)  => void

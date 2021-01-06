@@ -78,7 +78,7 @@ export class PhysicalGateway extends PhysicalFolder
         })
     }
 
-    protected find(path : FSPath, callback : (error : Error, resource ?: PhysicalResource) => void, forceRefresh : boolean = false)
+    protected find(path : FSPath, callback : (error : Error, resource ?: PhysicalResource) => void, forceRefresh  = false)
     {
         const resource = this.cache[path.toString()];
         if(forceRefresh || !resource)

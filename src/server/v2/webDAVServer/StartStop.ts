@@ -13,10 +13,10 @@ export function executeRequest(req : Request, res : http.ServerResponse, rootPat
     let method : HTTPMethod = this.methods[this.normalizeMethodName(req.method)];
     if(!method)
         method = this.unknownMethod;
-        if(req.url.startsWith('/files/')){
-            req.ignoredPrefix = req.url.split('/').slice(0,3).join('/')
-            req.url = req.url.split('/').slice(3).join('/')
-        }
+    if(req.url.startsWith('/files/')){
+        req.ignoredPrefix = req.url.split('/').slice(0,3).join('/')
+        req.url = req.url.split('/').slice(3).join('/')
+    }
     HTTPRequestContext.create(this, req, res, rootPath, (e, base) => {
         if(e)
         {

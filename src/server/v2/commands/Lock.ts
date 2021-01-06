@@ -117,28 +117,28 @@ function refreshLock(ctx : HTTPRequestContext, lockUUID : string, callback)
 {
     ctx.getResource((e, r) => {
         //ctx.requirePrivilege([ 'canSetLock', 'canGetLock' ], r, () => {
-            r.lockManager((e, lm) => {
-                if(e)
-                {
-                    if(!ctx.setCodeFromError(e))
-                        ctx.setCode(HTTPCodes.InternalServerError)
-                    return callback();
-                }
+        r.lockManager((e, lm) => {
+            if(e)
+            {
+                if(!ctx.setCodeFromError(e))
+                    ctx.setCode(HTTPCodes.InternalServerError)
+                return callback();
+            }
                 
-                lm.refresh(lockUUID, ctx.server.options.lockTimeout, (e, lock) => {
-                    if(e || !lock)
-                    {
-                        ctx.setCode(HTTPCodes.PreconditionFailed)
-                        callback()
-                        return;
-                    }
+            lm.refresh(lockUUID, ctx.server.options.lockTimeout, (e, lock) => {
+                if(e || !lock)
+                {
+                    ctx.setCode(HTTPCodes.PreconditionFailed)
+                    callback()
+                    return;
+                }
                     
-                    //ctx.invokeEvent('refreshLock', r, lock);
-                    ctx.setCode(HTTPCodes.OK);
-                    ctx.writeBody(createResponse(ctx, lock));
-                    callback();
-                })
+                //ctx.invokeEvent('refreshLock', r, lock);
+                ctx.setCode(HTTPCodes.OK);
+                ctx.writeBody(createResponse(ctx, lock));
+                callback();
             })
+        })
         //})
     })
 }

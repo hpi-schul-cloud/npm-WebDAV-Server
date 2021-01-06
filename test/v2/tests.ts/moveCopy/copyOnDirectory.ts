@@ -8,18 +8,18 @@ export default ((info, isValid) =>
     
     starter(info.startServer(), info, isValid, 'COPY', 'folder1', 'folder1x', false, v2.HTTPCodes.Created, (s) => {
         check(s, info, isValid, 'folder1', true, () => {
-        check(s, info, isValid, 'folder1x', true, () => {
-            isValid(true);
-        })
+            check(s, info, isValid, 'folder1x', true, () => {
+                isValid(true);
+            })
         })
     });
     
     starter(info.startServer(), info, isValid, 'COPY', 'folder1/folder2x', 'folder1/folder2', false, v2.HTTPCodes.PreconditionFailed);
     starter(info.startServer(), info, isValid, 'COPY', 'folder1/folder2x', 'folder1/folder2', true, v2.HTTPCodes.NoContent, (s) => {
         check(s, info, isValid, 'folder1/folder2x', true, () => {
-        check(s, info, isValid, 'folder1/folder2', true, () => {
-            isValid(true);
-        })
+            check(s, info, isValid, 'folder1/folder2', true, () => {
+                isValid(true);
+            })
         })
     });
 

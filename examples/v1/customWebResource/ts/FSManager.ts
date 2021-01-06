@@ -3,7 +3,7 @@ import { WebFile } from './Resource'
 
 export class WebFSManager implements FSManager
 {
-    uid : string = 'WebFSManager_1.0.0';
+    uid  = 'WebFSManager_1.0.0';
     
     serialize(resource : any, obj : SerializedObject) : object
     {

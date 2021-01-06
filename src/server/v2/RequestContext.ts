@@ -62,7 +62,7 @@ export class RequestContextHeaders
         return defaultValue;
     }
 
-    findBestAccept(defaultType : string = 'xml') : string
+    findBestAccept(defaultType  = 'xml') : string
     {
         const accepts = this.find('Accept', 'text/xml').split(',');
         const regex = {
@@ -99,7 +99,7 @@ export class DefaultRequestContextExternalOptions implements RequestContextExter
     headers : { [name : string] : string } = {
         host: 'localhost'
     }
-    url : string = '/'
+    url  = '/'
     user : IUser = {
         isAdministrator: true,
         isDefaultUser: false,

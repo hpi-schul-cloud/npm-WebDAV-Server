@@ -62,9 +62,9 @@ export interface IVirtualStoredContentManagerMiddleware
 
 export class SimpleVirtualStoredContentManager extends VirtualStoredContentManager
 {
-    initialized : boolean = false;
-    uid : string = 'SimpleVirtualStoredContentManager_1.3.3';
-    cid : number = 0;
+    initialized  = false;
+    uid  = 'SimpleVirtualStoredContentManager_1.3.3';
+    cid  = 0;
 
     constructor(public storeFolderPath : string, public middleware ?: IVirtualStoredContentManagerMiddleware)
     {

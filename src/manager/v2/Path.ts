@@ -86,7 +86,7 @@ export class Path
         return new Path(this);
     }
 
-    toString(endsWithSlash : boolean = false) : string
+    toString(endsWithSlash  = false) : string
     {
         const value = '/' + this.paths.join('/');
         if(endsWithSlash && value.length > 1)

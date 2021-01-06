@@ -8,33 +8,33 @@ export default ((info, isValid) =>
     
     starter(info.startServer(), info, isValid, 'MOVE', 'file1', 'file1_moved', false, v2.HTTPCodes.Created, (s) => {
         check(s, info, isValid, 'file1', false, () => {
-        check(s, info, isValid, 'file1_moved', true, () => {
-            isValid(true);
-        })
+            check(s, info, isValid, 'file1_moved', true, () => {
+                isValid(true);
+            })
         })
     });
     
     starter(info.startServer(), info, isValid, 'MOVE', 'file1', 'folder1/file2', false, v2.HTTPCodes.PreconditionFailed);
     starter(info.startServer(), info, isValid, 'MOVE', 'file1', 'folder1/file2', true, v2.HTTPCodes.NoContent, (s) => {
         check(s, info, isValid, 'file1', false, () => {
-        check(s, info, isValid, 'folder1/file2', true, () => {
-            isValid(true);
-        })
+            check(s, info, isValid, 'folder1/file2', true, () => {
+                isValid(true);
+            })
         })
     });
     
     starter(info.startServer(), info, isValid, 'MOVE', 'folder1/folder2/file3', 'folder1/folder2x/file3', true, v2.HTTPCodes.Created, (s) => {
         check(s, info, isValid, 'folder1/folder2/file3', false, () => {
-        check(s, info, isValid, 'folder1/folder2x/file3', true, () => {
-            isValid(true);
-        })
+            check(s, info, isValid, 'folder1/folder2x/file3', true, () => {
+                isValid(true);
+            })
         })
     });
     starter(info.startServer(), info, isValid, 'MOVE', 'folder1/folder2/file3', 'folder1/folder2x/file3', false, v2.HTTPCodes.Created, (s) => {
         check(s, info, isValid, 'folder1/folder2/file3', false, () => {
-        check(s, info, isValid, 'folder1/folder2x/file3', true, () => {
-            isValid(true);
-        })
+            check(s, info, isValid, 'folder1/folder2x/file3', true, () => {
+                isValid(true);
+            })
         })
     });
 

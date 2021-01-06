@@ -71,7 +71,7 @@ export class PhysicalGateway extends webdav.PhysicalFolder
         })
     }
 
-    protected find(path : webdav.FSPath, callback : (error : Error, resource ?: webdav.PhysicalResource) => void, forceRefresh : boolean = false)
+    protected find(path : webdav.FSPath, callback : (error : Error, resource ?: webdav.PhysicalResource) => void, forceRefresh  = false)
     {
         const resource = this.cache[path.toString()];
         if(forceRefresh || !resource)

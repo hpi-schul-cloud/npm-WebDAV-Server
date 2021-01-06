@@ -14,7 +14,7 @@ export class Workflow
 
     exitOnError : boolean;
 
-    constructor(exitOnError : boolean = true)
+    constructor(exitOnError  = true)
     {
         this.exitOnError = !!exitOnError;
         this.intermediateFn = null;

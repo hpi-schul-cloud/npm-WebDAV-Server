@@ -11,7 +11,7 @@ export class LockKind
      */
     public timeout : number
 
-    constructor(scope : LockScope, type : LockType, timeoutSeconds : number = 60)
+    constructor(scope : LockScope, type : LockType, timeoutSeconds  = 60)
     {
         this.timeout = timeoutSeconds;
         this.scope = scope;

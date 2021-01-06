@@ -5,7 +5,7 @@ import { IResource } from '../../resource/v1/IResource'
 
 export class PhysicalGFSManager extends PhysicalFSManager
 {
-    uid : string = 'PhysicalGFSManager_1.0.0';
+    uid  = 'PhysicalGFSManager_1.0.0';
 
     serialize(resource : any, obj : SerializedObject) : object
     {

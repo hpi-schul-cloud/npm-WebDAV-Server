@@ -47,35 +47,35 @@ export default ((info, isValid) =>
         }
 
         check('file1', () => {
-        check('emptyFolder1', () => {
-        check('folder1', () => {
-        check('folder1/file2', () => {
-        check('folder1/emptyFolder2', () => {
-        check('folder1/folder2', () => {
-        check('folder1/folder2/emptyFolder3', () => {
-        check('folder1/folder2/file3', () => {
-        check('folder1/folder2x', () => {
-        check('folder1/folder2x/emptyFolder3x', () => {
-        check('folder1/folder2x/file3x', () => {
-        checkContent('file1', 'Hello!', () => {
-        checkContent('folder1/file2', 'Hello!', () => {
-        checkContent('folder1/folder2/file3', 'Hello!', () => {
-        checkContent('folder1/folder2x/file3x', 'Hello!', () => {
-            isValid(true);
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
+            check('emptyFolder1', () => {
+                check('folder1', () => {
+                    check('folder1/file2', () => {
+                        check('folder1/emptyFolder2', () => {
+                            check('folder1/folder2', () => {
+                                check('folder1/folder2/emptyFolder3', () => {
+                                    check('folder1/folder2/file3', () => {
+                                        check('folder1/folder2x', () => {
+                                            check('folder1/folder2x/emptyFolder3x', () => {
+                                                check('folder1/folder2x/file3x', () => {
+                                                    checkContent('file1', 'Hello!', () => {
+                                                        checkContent('folder1/file2', 'Hello!', () => {
+                                                            checkContent('folder1/folder2/file3', 'Hello!', () => {
+                                                                checkContent('folder1/folder2x/file3x', 'Hello!', () => {
+                                                                    isValid(true);
+                                                                })
+                                                            })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
         })
     })
 
@@ -109,27 +109,27 @@ export default ((info, isValid) =>
         }
 
         check('file1', () => {
-        check('emptyFolder1', () => {
-        check('folder1', () => {
-        check('folder1/file2', () => {
-        check('folder1/emptyFolder2', () => {
-        check('folder1/folder2', () => {
-        check('folder1/folder2/emptyFolder3', () => {
-        check('folder1/folder2/file3', () => {
-        check('folder1/folder2x', () => {
-        check('folder1/folder2x/emptyFolder3x', () => {
-        check('folder1/folder2x/file3x', () => {
-            isValid(true);
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
-        })
+            check('emptyFolder1', () => {
+                check('folder1', () => {
+                    check('folder1/file2', () => {
+                        check('folder1/emptyFolder2', () => {
+                            check('folder1/folder2', () => {
+                                check('folder1/folder2/emptyFolder3', () => {
+                                    check('folder1/folder2/file3', () => {
+                                        check('folder1/folder2x', () => {
+                                            check('folder1/folder2x/emptyFolder3x', () => {
+                                                check('folder1/folder2x/file3x', () => {
+                                                    isValid(true);
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
         })
     })
 

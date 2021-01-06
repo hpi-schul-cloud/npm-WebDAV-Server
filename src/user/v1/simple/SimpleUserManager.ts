@@ -26,7 +26,7 @@ export class SimpleUserManager implements IUserManager
         callback(this.users.__default);
     }
 
-    addUser(name : string, password : string, isAdmin : boolean = false) : IUser
+    addUser(name : string, password : string, isAdmin  = false) : IUser
     {
         const user = new SimpleUser(name, password, isAdmin, false);
         this.users[name] = user;

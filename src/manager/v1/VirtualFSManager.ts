@@ -7,7 +7,7 @@ import { Errors } from '../../Errors'
 
 export class VirtualFSManager implements FSManager
 {
-    uid : string = 'VirtualFSManager_1.0.2';
+    uid  = 'VirtualFSManager_1.0.2';
 
     serialize(resource : any, obj : SerializedObject) : object
     {

@@ -47,14 +47,14 @@ export interface RenameInfo extends IContextInfo
 {
     destinationPath : Path
 }
-export interface PrivilegeManagerInfo extends IContextInfo { }
-export interface ETagInfo extends IContextInfo { }
-export interface AvailableLocksInfo extends IContextInfo { }
-export interface LockManagerInfo extends IContextInfo { }
-export interface PropertyManagerInfo extends IContextInfo { }
-export interface ReadDirInfo extends IContextInfo { }
-export interface CreationDateInfo extends IContextInfo { }
-export interface LastModifiedDateInfo extends IContextInfo { }
-export interface WebNameInfo extends IContextInfo { }
-export interface DisplayNameInfo extends IContextInfo { }
-export interface TypeInfo extends IContextInfo { }
+export type PrivilegeManagerInfo = IContextInfo
+export type ETagInfo = IContextInfo
+export type AvailableLocksInfo = IContextInfo
+export type LockManagerInfo = IContextInfo
+export type PropertyManagerInfo = IContextInfo
+export type ReadDirInfo = IContextInfo
+export type CreationDateInfo = IContextInfo
+export type LastModifiedDateInfo = IContextInfo
+export type WebNameInfo = IContextInfo
+export type DisplayNameInfo = IContextInfo
+export type TypeInfo = IContextInfo

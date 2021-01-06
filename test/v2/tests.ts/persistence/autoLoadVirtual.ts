@@ -37,21 +37,21 @@ export default ((info, isValid) =>
                     isValid(!e, 'Could not autoLoad the supposed saved server state.', e);
 
                     prob(server2, isValid, '/folder1', v2.ResourceType.Directory, () => {
-                    prob(server2, isValid, '/folder1/emptyFolder2', v2.ResourceType.Directory, () => {
-                    prob(server2, isValid, '/folder1/file2', v2.ResourceType.File, () => {
-                    prob(server2, isValid, '/folder1/folder2', v2.ResourceType.Directory, () => {
-                    prob(server2, isValid, '/folder1/folder2/emptyFolder3', v2.ResourceType.Directory, () => {
-                    prob(server2, isValid, '/folder1/folder2/file3', v2.ResourceType.File, () => {
-                    prob(server2, isValid, '/emptyFolder1', v2.ResourceType.Directory, () => {
-                    prob(server2, isValid, '/file1', v2.ResourceType.File, () => {
-                        isValid(true);
-                    })
-                    })
-                    })
-                    })
-                    })
-                    })
-                    })
+                        prob(server2, isValid, '/folder1/emptyFolder2', v2.ResourceType.Directory, () => {
+                            prob(server2, isValid, '/folder1/file2', v2.ResourceType.File, () => {
+                                prob(server2, isValid, '/folder1/folder2', v2.ResourceType.Directory, () => {
+                                    prob(server2, isValid, '/folder1/folder2/emptyFolder3', v2.ResourceType.Directory, () => {
+                                        prob(server2, isValid, '/folder1/folder2/file3', v2.ResourceType.File, () => {
+                                            prob(server2, isValid, '/emptyFolder1', v2.ResourceType.Directory, () => {
+                                                prob(server2, isValid, '/file1', v2.ResourceType.File, () => {
+                                                    isValid(true);
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
                     })
                 })
             }, 1000);

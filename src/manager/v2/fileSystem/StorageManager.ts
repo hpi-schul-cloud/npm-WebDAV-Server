@@ -89,7 +89,7 @@ export class PerUserStorageManager implements IStorageManager
         if(!value)
             return 0;
         if(value.constructor === String)
-            return (value as String).length;
+            return (value as string).length;
         if(Array.isArray(value))
             return (value as XMLElement[]).map((el) => this.evalPropValue(el)).reduce((p, n) => p + n, 0);
 

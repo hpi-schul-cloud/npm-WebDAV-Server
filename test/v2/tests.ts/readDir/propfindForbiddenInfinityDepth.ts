@@ -13,7 +13,7 @@ export default ((info, isValid) =>
                 url: 'http://localhost:' + info.port + '/folder',
                 method: 'PROPFIND',
                 headers: {
-                    depth: depth
+                    depth
                 }
             }, v2.HTTPCodes.Forbidden, () => {
                 isValid(true);

@@ -17,51 +17,51 @@ export default class implements HTTPMethod
         ctx.getResource((e, r) => {
             ctx.checkIfHeader(r, () => {
                 //ctx.requirePrivilege(targetSource ? [ 'canSource', 'canWrite' ] : [ 'canWrite' ], r, () => {
-                    let mode : OpenWriteStreamMode = 'canCreate';
-                    r.type((e, type) => process.nextTick(() => {
-                        if(e === Errors.ResourceNotFound)
-                        {
-                            mode = 'mustCreate';
-                        }
-                        else if(e)
+                let mode : OpenWriteStreamMode = 'canCreate';
+                r.type((e, type) => process.nextTick(() => {
+                    if(e === Errors.ResourceNotFound)
+                    {
+                        mode = 'mustCreate';
+                    }
+                    else if(e)
+                    {
+                        if(!ctx.setCodeFromError(e))
+                            ctx.setCode(HTTPCodes.InternalServerError);
+                        return callback();
+                    }
+                    else if(!type.isFile)
+                    {
+                        ctx.setCode(HTTPCodes.MethodNotAllowed);
+                        return callback();
+                    }
+
+                    r.openWriteStream(mode, targetSource, ctx.headers.contentLength, (e, wStream, created) => {
+                        if(e)
                         {
                             if(!ctx.setCodeFromError(e))
-                                ctx.setCode(HTTPCodes.InternalServerError);
-                            return callback();
-                        }
-                        else if(!type.isFile)
-                        {
-                            ctx.setCode(HTTPCodes.MethodNotAllowed);
+                                ctx.setCode(e === Errors.IntermediateResourceMissing || e === Errors.WrongParentTypeForCreation ? HTTPCodes.Conflict : HTTPCodes.InternalServerError);
                             return callback();
                         }
 
-                        r.openWriteStream(mode, targetSource, ctx.headers.contentLength, (e, wStream, created) => {
-                            if(e)
-                            {
-                                if(!ctx.setCodeFromError(e))
-                                    ctx.setCode(e === Errors.IntermediateResourceMissing || e === Errors.WrongParentTypeForCreation ? HTTPCodes.Conflict : HTTPCodes.InternalServerError);
-                                return callback();
-                            }
-
-                            inputStream.pipe(wStream);
-                            wStream.on('finish', (e) => {
-                                if(created)
-                                    ctx.setCode(HTTPCodes.Created);
-                                else
-                                    ctx.setCode(HTTPCodes.OK);
+                        inputStream.pipe(wStream);
+                        wStream.on('finish', (e) => {
+                            if(created)
+                                ctx.setCode(HTTPCodes.Created);
+                            else
+                                ctx.setCode(HTTPCodes.OK);
                                 //ctx.invokeEvent('write', r);
-                                r.etag((e, etag) => {
-                                    ctx.response.setHeader('ETag', etag)
-                                    callback();
-                                })
-                            });
-                            wStream.on('error', (e) => {
-                                if(!ctx.setCodeFromError(e))
-                                    ctx.setCode(HTTPCodes.InternalServerError)
+                            r.etag((e, etag) => {
+                                ctx.response.setHeader('ETag', etag)
                                 callback();
-                            });
-                        })
-                    }))
+                            })
+                        });
+                        wStream.on('error', (e) => {
+                            if(!ctx.setCodeFromError(e))
+                                ctx.setCode(HTTPCodes.InternalServerError)
+                            callback();
+                        });
+                    })
+                }))
                 //})
             })
         })

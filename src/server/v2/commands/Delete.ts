@@ -9,19 +9,19 @@ export default class implements HTTPMethod
             ctx.getResource((e, r) => {
                 ctx.checkIfHeader(r, () => {
                     //ctx.requirePrivilege([ 'canDelete' ], r, () => {
-                        r.delete((e) => process.nextTick(() => {
-                            if(e)
-                            {
-                                if(!ctx.setCodeFromError(e))
-                                    ctx.setCode(HTTPCodes.InternalServerError);
-                            }
-                            else
-                            {
-                                ctx.setCode(HTTPCodes.OK);
-                                //ctx.invokeEvent('delete', r);
-                            }
-                            callback();
-                        }))
+                    r.delete((e) => process.nextTick(() => {
+                        if(e)
+                        {
+                            if(!ctx.setCodeFromError(e))
+                                ctx.setCode(HTTPCodes.InternalServerError);
+                        }
+                        else
+                        {
+                            ctx.setCode(HTTPCodes.OK);
+                            //ctx.invokeEvent('delete', r);
+                        }
+                        callback();
+                    }))
                     //})
                 })
             })

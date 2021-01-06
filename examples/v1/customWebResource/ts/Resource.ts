@@ -10,7 +10,7 @@ export class WebFile extends webdav.StandardResource
     lenUpdateTime : number
     refreshTimeoutMs : number
 
-    constructor(webUrl : string, fileName : string, refreshTimeoutMs : number = 10000)
+    constructor(webUrl : string, fileName : string, refreshTimeoutMs  = 10000)
     {
         super(null, new webFSManager.WebFSManager());
 

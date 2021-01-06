@@ -14,13 +14,11 @@ function test(info : TestInfo, isValid : TestCallback, root : string, callback :
     }, v2.HTTPCodes.MultiStatus, (req, body) => {
         try
         {
-            const sub = body.find('DAV:multistatus').findMany('DAV:response').map((r) => {
-                return {
-                    href: r.find('DAV:href').findText(),
-                    locationHref: r.find('DAV:location').find('DAV:href').findText(),
-                    displayName: r.find('DAV:propstat').find('DAV:prop').find('DAV:displayname').findText()
-                };
-            });
+            const sub = body.find('DAV:multistatus').findMany('DAV:response').map((r) => ({
+                href: r.find('DAV:href').findText(),
+                locationHref: r.find('DAV:location').find('DAV:href').findText(),
+                displayName: r.find('DAV:propstat').find('DAV:prop').find('DAV:displayname').findText()
+            }));
 
             const invalidEntries = sub.filter((entry) => {
                 if(entry.href === encodeURI(entry.href))
@@ -33,9 +31,7 @@ function test(info : TestInfo, isValid : TestCallback, root : string, callback :
             if(invalidEntries.length === 0)
                 return callback();
             
-            isValid(false, 'Some resource\'s url are not correctly encoded in PROPFIND in "' + root + '", displayname must not be encoded while location.href and href must be encoded : ' + invalidEntries.map((entry) => {
-                return 'displayName = "' + entry.displayName + '" ; href = "' + entry.href + '" ; location.href = "' + entry.locationHref + '"';
-            }).join(' && '));
+            isValid(false, 'Some resource\'s url are not correctly encoded in PROPFIND in "' + root + '", displayname must not be encoded while location.href and href must be encoded : ' + invalidEntries.map((entry) => 'displayName = "' + entry.displayName + '" ; href = "' + entry.href + '" ; location.href = "' + entry.locationHref + '"').join(' && '));
         }
         catch(ex)
         {

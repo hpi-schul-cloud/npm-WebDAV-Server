@@ -36,7 +36,7 @@ export class HTTPDigestAuthentication implements HTTPAuthentication
             })
         }
 
-        let authHeader = arg.findHeader('Authorization')
+        const authHeader = arg.findHeader('Authorization')
         if(!authHeader)
             return onError(Errors.MissingAuthorisationHeader);
         

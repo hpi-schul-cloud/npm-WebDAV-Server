@@ -9,7 +9,7 @@ import * as path from 'path'
 
 export class PhysicalFSManager implements FSManager
 {
-    uid : string = 'PhysicalFSManager_1.0.2';
+    uid  = 'PhysicalFSManager_1.0.2';
 
     serialize(resource : any, obj : SerializedObject) : object
     {

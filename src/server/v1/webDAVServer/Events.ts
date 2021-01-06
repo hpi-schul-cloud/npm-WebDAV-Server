@@ -5,10 +5,10 @@ import { FSPath } from '../../../manager/v1/FSPath'
 import { Lock } from '../../../resource/v1/lock/Lock'
 
 export type EventsName = 'create' | 'delete' | 'copy' | 'move'
-    | 'lock' | 'refreshLock' | 'unlock'
-    | 'setProperty' | 'removeProperty'
-    | 'write' | 'read'
-    | 'addChild';
+| 'lock' | 'refreshLock' | 'unlock'
+| 'setProperty' | 'removeProperty'
+| 'write' | 'read'
+| 'addChild';
 
 export type DetailsType = IResource | FSPath | Lock | XMLElement;
 export type Listener = (arg : MethodCallArgs, subjectResource : IResource, details ?: DetailsType) => void;

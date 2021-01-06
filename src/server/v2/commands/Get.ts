@@ -52,12 +52,10 @@ class MultipleRangedStream extends Transform
     {
         super();
 
-        this.streams = ranges.map((r) => {
-            return {
-                stream: new RangedStream(r.min, r.max),
-                range: r
-            }
-        });
+        this.streams = ranges.map((r) => ({
+            stream: new RangedStream(r.min, r.max),
+            range: r
+        }));
     }
 
     _transform(chunk : string | Buffer, encoding : string, callback : Function)
@@ -89,12 +87,8 @@ export function parseRangeHeader(mimeType : string, size : number, range : strin
         .map(() => String.fromCharCode('a'.charCodeAt(0) + Math.floor(Math.random() * 26)))
         .join('');
 
-    const createMultipart = (range : IRange) => {
-        return `--${separator}\r\nContent-Type: ${mimeType}\r\nContent-Range: bytes ${range.min}-${range.max}/*\r\n\r\n`;
-    };
-    const endMultipart = () => {
-        return `\r\n--${separator}--`;
-    };
+    const createMultipart = (range : IRange) => `--${separator}\r\nContent-Type: ${mimeType}\r\nContent-Range: bytes ${range.min}-${range.max}/*\r\n\r\n`;
+    const endMultipart = () => `\r\n--${separator}--`;
 
     const ranges = range
         .split(',')
@@ -159,133 +153,133 @@ export default class implements HTTPMethod
                     const targetSource = ctx.headers.isSource;
 
                     //ctx.requirePrivilegeEx(targetSource ? [ 'canRead', 'canSource', 'canGetMimeType' ] : [ 'canRead', 'canGetMimeType' ], () => {
-                        r.type((e, type) => {
-                            if(e)
+                    r.type((e, type) => {
+                        if(e)
+                        {
+                            if(!ctx.setCodeFromError(e))
+                                ctx.setCode(HTTPCodes.InternalServerError)
+                            return callback();
+                        }
+                        if(!type.isFile)
+                        {
+                            ctx.setCode(HTTPCodes.MethodNotAllowed)
+                            return callback();
+                        }
+                            
+                        const range = ctx.headers.find('Range');
+                        r.size(targetSource, (e, size) => process.nextTick(() => {
+                            if(e && !range)
                             {
                                 if(!ctx.setCodeFromError(e))
                                     ctx.setCode(HTTPCodes.InternalServerError)
                                 return callback();
                             }
-                            if(!type.isFile)
-                            {
-                                ctx.setCode(HTTPCodes.MethodNotAllowed)
-                                return callback();
-                            }
-                            
-                            const range = ctx.headers.find('Range');
-                            r.size(targetSource, (e, size) => process.nextTick(() => {
-                                if(e && !range)
+
+                            r.mimeType(targetSource, (e, mimeType) => process.nextTick(() => {
+                                if(e)
                                 {
                                     if(!ctx.setCodeFromError(e))
                                         ctx.setCode(HTTPCodes.InternalServerError)
                                     return callback();
                                 }
-
-                                r.mimeType(targetSource, (e, mimeType) => process.nextTick(() => {
-                                    if(e)
-                                    {
-                                        if(!ctx.setCodeFromError(e))
-                                            ctx.setCode(HTTPCodes.InternalServerError)
-                                        return callback();
-                                    }
-                                    r.etag((e, etag) => {
-                                        ctx.response.setHeader('ETag', etag)
+                                r.etag((e, etag) => {
+                                    ctx.response.setHeader('ETag', etag)
                                         
-                                        r.openReadStream(targetSource, (e, rstream) => {
-                                            if(e)
-                                            {
-                                                if(!ctx.setCodeFromError(e))
-                                                    ctx.setCode(HTTPCodes.MethodNotAllowed)
-                                                return callback();
-                                            }
-                                            //ctx.invokeEvent('read', r);
+                                    r.openReadStream(targetSource, (e, rstream) => {
+                                        if(e)
+                                        {
+                                            if(!ctx.setCodeFromError(e))
+                                                ctx.setCode(HTTPCodes.MethodNotAllowed)
+                                            return callback();
+                                        }
+                                        //ctx.invokeEvent('read', r);
     
-                                            rstream.on('error', (e) => {
-                                                if(!ctx.setCodeFromError(e))
-                                                    ctx.setCode(HTTPCodes.InternalServerError);
-                                                return callback();
-                                            })
-                                            if(range)
-                                            {
-                                                try
-                                                {
-                                                    const { ranges, separator, len, createMultipart, endMultipart } = parseRangeHeader(mimeType, size, range);
-    
-                                                    ctx.setCode(HTTPCodes.PartialContent);
-                                                    ctx.response.setHeader('Accept-Ranges', 'bytes')
-                                                    ctx.response.setHeader('Content-Length', len.toString())
-                                                    if(ranges.length <= 1)
-                                                    {
-                                                        ctx.response.setHeader('Content-Type', mimeType)
-                                                        ctx.response.setHeader('Content-Range', `bytes ${ranges[0].min}-${ranges[0].max}/*`)
-                                                        rstream.on('end', callback);
-                                                        return rstream.pipe(new RangedStream(ranges[0].min, ranges[0].max)).pipe(ctx.response);
-                                                    }
-                                                    
-                                                    ctx.response.setHeader('Content-Type', `multipart/byteranges; boundary=${separator}`)
-    
-                                                    const multi = new MultipleRangedStream(ranges);
-                                                    rstream.pipe(multi);
-    
-                                                    let current = 0;
-                                                    const dones = {};
-                                                    const evalNext = () => {
-                                                        if(current === ranges.length)
-                                                        {
-                                                            return ctx.response.end(endMultipart(), () => {
-                                                                callback();
-                                                            });
-                                                        }
-    
-                                                        const sr = dones[current];
-                                                        if(sr)
-                                                        {
-                                                            if(current > 0)
-                                                                ctx.response.write('\r\n');
-                                                            ctx.response.write(createMultipart(sr.range));
-                                                            
-                                                            sr.stream.on('end', () => {
-                                                                ++current;
-                                                                evalNext();
-                                                            });
-                                                            sr.stream.on('data', (chunk, encoding) => {
-                                                                ctx.response.write(chunk, encoding);
-                                                            })
-                                                            //sr.stream.pipe(ctx.response);
-                                                        }
-                                                    }
-                                                    multi.streams.forEach((sr, index) => {
-                                                        dones[index] = sr;
-                                                    })
-    
-                                                    multi.onEnded = () => {
-                                                        multi.streams.forEach((sr, index) => {
-                                                            sr.stream.end();
-                                                        });
-                                                        evalNext();
-                                                    }
-                                                }
-                                                catch(ex)
-                                                {
-                                                    ctx.setCode(HTTPCodes.BadRequest);
-                                                    callback();
-                                                }
-                                            }
-                                            else
-                                            {
-                                                ctx.setCode(HTTPCodes.OK);
-                                                ctx.response.setHeader('Accept-Ranges', 'bytes')
-                                                ctx.response.setHeader('Content-Type', mimeType);
-                                                if(size !== null && size !== undefined && size > -1)
-                                                    ctx.response.setHeader('Content-Length', size.toString());
-                                                rstream.on('end', callback);
-                                                rstream.pipe(ctx.response);
-                                            }
+                                        rstream.on('error', (e) => {
+                                            if(!ctx.setCodeFromError(e))
+                                                ctx.setCode(HTTPCodes.InternalServerError);
+                                            return callback();
                                         })
+                                        if(range)
+                                        {
+                                            try
+                                            {
+                                                const { ranges, separator, len, createMultipart, endMultipart } = parseRangeHeader(mimeType, size, range);
+    
+                                                ctx.setCode(HTTPCodes.PartialContent);
+                                                ctx.response.setHeader('Accept-Ranges', 'bytes')
+                                                ctx.response.setHeader('Content-Length', len.toString())
+                                                if(ranges.length <= 1)
+                                                {
+                                                    ctx.response.setHeader('Content-Type', mimeType)
+                                                    ctx.response.setHeader('Content-Range', `bytes ${ranges[0].min}-${ranges[0].max}/*`)
+                                                    rstream.on('end', callback);
+                                                    return rstream.pipe(new RangedStream(ranges[0].min, ranges[0].max)).pipe(ctx.response);
+                                                }
+                                                    
+                                                ctx.response.setHeader('Content-Type', `multipart/byteranges; boundary=${separator}`)
+    
+                                                const multi = new MultipleRangedStream(ranges);
+                                                rstream.pipe(multi);
+    
+                                                let current = 0;
+                                                const dones = {};
+                                                const evalNext = () => {
+                                                    if(current === ranges.length)
+                                                    {
+                                                        return ctx.response.end(endMultipart(), () => {
+                                                            callback();
+                                                        });
+                                                    }
+    
+                                                    const sr = dones[current];
+                                                    if(sr)
+                                                    {
+                                                        if(current > 0)
+                                                            ctx.response.write('\r\n');
+                                                        ctx.response.write(createMultipart(sr.range));
+                                                            
+                                                        sr.stream.on('end', () => {
+                                                            ++current;
+                                                            evalNext();
+                                                        });
+                                                        sr.stream.on('data', (chunk, encoding) => {
+                                                            ctx.response.write(chunk, encoding);
+                                                        })
+                                                        //sr.stream.pipe(ctx.response);
+                                                    }
+                                                }
+                                                multi.streams.forEach((sr, index) => {
+                                                    dones[index] = sr;
+                                                })
+    
+                                                multi.onEnded = () => {
+                                                    multi.streams.forEach((sr, index) => {
+                                                        sr.stream.end();
+                                                    });
+                                                    evalNext();
+                                                }
+                                            }
+                                            catch(ex)
+                                            {
+                                                ctx.setCode(HTTPCodes.BadRequest);
+                                                callback();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ctx.setCode(HTTPCodes.OK);
+                                            ctx.response.setHeader('Accept-Ranges', 'bytes')
+                                            ctx.response.setHeader('Content-Type', mimeType);
+                                            if(size !== null && size !== undefined && size > -1)
+                                                ctx.response.setHeader('Content-Length', size.toString());
+                                            rstream.on('end', callback);
+                                            rstream.pipe(ctx.response);
+                                        }
                                     })
-                                }))
+                                })
                             }))
-                        })
+                        }))
+                    })
                     //})
                 })
             })

@@ -22,7 +22,7 @@ import { SerializedData, FileSystemSerializer } from '../../../manager/v2/export
 export type WebDAVServerStartCallback = (server ?: http.Server) => void;
 
 export type FileSystemEvent = 'create' | 'delete' | 'openReadStream' | 'openWriteStream' | 'move' | 'copy' | 'rename' |
-                              'before-create' | 'before-delete' | 'before-openReadStream' | 'before-openWriteStream' | 'before-move' | 'before-copy' | 'before-rename';
+'before-create' | 'before-delete' | 'before-openReadStream' | 'before-openWriteStream' | 'before-move' | 'before-copy' | 'before-rename';
 export type ServerEvent = FileSystemEvent;
 export type EventCallback = (ctx : RequestContext, fs : FileSystem, path : Path, data ?: any) => void;
 
@@ -211,7 +211,7 @@ export class WebDAVServer
      * @param override Define if the mounting can override a previous mounted file system
      * @returns The status of the mounting
      */
-    setFileSystemSync(path : Path | string, fs : FileSystem, override : boolean = true) : boolean
+    setFileSystemSync(path : Path | string, fs : FileSystem, override  = true) : boolean
     {
         const sPath = new Path(path).toString();
 
@@ -269,7 +269,7 @@ export class WebDAVServer
      * @returns The number of removed file systems
      */
     removeFileSystemSync(fs : FileSystem, checkByReference ?: boolean) : number
-    removeFileSystemSync(fs_path : Path | string | FileSystem, checkByReference : boolean = true) : number
+    removeFileSystemSync(fs_path : Path | string | FileSystem, checkByReference  = true) : number
     {
         let nb = 0;
         if(fs_path.constructor === Path || fs_path.constructor === String)
