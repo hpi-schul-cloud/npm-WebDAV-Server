@@ -1,7 +1,17 @@
-node_modules
+# Logs
 *.log
-test/v2/tests
-experiment
+
+# TypeScript
+/lib/
+
+# NPM / Yarn
+node_modules
 package-lock.json
 yarn.lock
-/lib/
+
+# IntelliJ Data
+.idea
+
+# Visual Studio Code data
+.vscode
+.vs/**
