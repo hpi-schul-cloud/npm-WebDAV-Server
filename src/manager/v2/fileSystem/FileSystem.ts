@@ -1406,7 +1406,6 @@ export abstract class FileSystem implements ISerializableFileSystem
                     return callback(e);
 
                 const buffIsLocked = new BufferedIsLocked(this, ctx, pPath);
-                const fs = this;
                 const manager = {
                     getLocksAsync() : Promise<Lock[]>
                     {
@@ -1414,7 +1413,7 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     getLocks(callback : ReturnCallback<Lock[]>) : void
                     {
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canReadLocks', callback, () => {
+                        issuePrivilegeCheck(this, ctx, pPath, 'canReadLocks', callback, () => {
                             lm.getLocks(callback);
                         })
                     },
@@ -1424,15 +1423,15 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     setLock(lock : Lock, callback : SimpleCallback) : void
                     {
-                        fs.emit('before-lock-set', ctx, pPath, { lock });
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canWriteLocks', callback, () => {
+                        this.emit('before-lock-set', ctx, pPath, { lock });
+                        issuePrivilegeCheck(this, ctx, pPath, 'canWriteLocks', callback, () => {
                             buffIsLocked.isLocked((e, isLocked) => {
                                 if(e || isLocked)
                                     return callback(e ? e : Errors.Locked);
 
                                 lm.setLock(lock, (e) => {
                                     if(!e)
-                                        fs.emit('lock-set', ctx, pPath, { lock });
+                                        this.emit('lock-set', ctx, pPath, { lock });
                                     callback(e);
                                 });
                             })
@@ -1444,15 +1443,15 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     removeLock(uuid : string, callback : ReturnCallback<boolean>) : void
                     {
-                        fs.emit('before-lock-remove', ctx, pPath, { uuid });
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canWriteLocks', callback, () => {
+                        this.emit('before-lock-remove', ctx, pPath, { uuid });
+                        issuePrivilegeCheck(this, ctx, pPath, 'canWriteLocks', callback, () => {
                             buffIsLocked.isLocked((e, isLocked) => {
                                 if(e || isLocked)
                                     return callback(e ? e : Errors.Locked);
 
                                 lm.removeLock(uuid, (e, removed) => {
                                     if(!e)
-                                        fs.emit('lock-remove', ctx, pPath, { uuid, removed });
+                                        this.emit('lock-remove', ctx, pPath, { uuid, removed });
                                     callback(e, removed);
                                 });
                             })
@@ -1464,7 +1463,7 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     getLock(uuid : string, callback : ReturnCallback<Lock>) : void
                     {
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canReadLocks', callback, () => {
+                        issuePrivilegeCheck(this, ctx, pPath, 'canReadLocks', callback, () => {
                             lm.getLock(uuid, callback);
                         })
                     },
@@ -1474,15 +1473,15 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     refresh(uuid : string, timeoutSeconds : number, callback : ReturnCallback<Lock>) : void
                     {
-                        fs.emit('before-lock-refresh', ctx, pPath, { uuid, timeout: timeoutSeconds });
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canWriteLocks', callback, () => {
+                        this.emit('before-lock-refresh', ctx, pPath, { uuid, timeout: timeoutSeconds });
+                        issuePrivilegeCheck(this, ctx, pPath, 'canWriteLocks', callback, () => {
                             buffIsLocked.isLocked((e, isLocked) => {
                                 if(e || isLocked)
                                     return callback(e ? e : Errors.Locked);
 
                                 lm.refresh(uuid, timeoutSeconds, (e, lock) => {
                                     if(!e)
-                                        fs.emit('lock-refresh', ctx, pPath, { uuid, timeout: timeoutSeconds, lock });
+                                        this.emit('lock-refresh', ctx, pPath, { uuid, timeout: timeoutSeconds, lock });
                                     callback(e, lock);
                                 });
                             })
@@ -1526,20 +1525,19 @@ export abstract class FileSystem implements ISerializableFileSystem
                     return callback(e);
 
                 const buffIsLocked = new BufferedIsLocked(this, ctx, pPath);
-                const fs = this;
 
                 callback(null, {
                     setProperty(name : string, value : ResourcePropertyValue, attributes : PropertyAttributes, callback : SimpleCallback) : void
                     {
-                        fs.emit('before-property-set', ctx, pPath, { name, value, attributes });
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canWriteProperties', callback, () => {
+                        this.emit('before-property-set', ctx, pPath, { name, value, attributes });
+                        issuePrivilegeCheck(this, ctx, pPath, 'canWriteProperties', callback, () => {
                             buffIsLocked.isLocked((e, isLocked) => {
                                 if(e || isLocked)
                                     return callback(e ? e : Errors.Locked);
 
                                 pm.setProperty(name, value, attributes, (e) => {
                                     if(!e)
-                                        fs.emit('property-set', ctx, pPath, { name, value, attributes });
+                                        this.emit('property-set', ctx, pPath, { name, value, attributes });
                                     callback(e);
                                 });
                             })
@@ -1547,21 +1545,21 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     getProperty(name : string, callback : Return2Callback<ResourcePropertyValue, PropertyAttributes>) : void
                     {
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canReadProperties', callback, () => {
+                        issuePrivilegeCheck(this, ctx, pPath, 'canReadProperties', callback, () => {
                             pm.getProperty(name, callback);
                         })
                     },
                     removeProperty(name : string, callback : SimpleCallback) : void
                     {
-                        fs.emit('before-property-remove', ctx, pPath, { name });
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canWriteProperties', callback, () => {
+                        this.emit('before-property-remove', ctx, pPath, { name });
+                        issuePrivilegeCheck(this, ctx, pPath, 'canWriteProperties', callback, () => {
                             buffIsLocked.isLocked((e, isLocked) => {
                                 if(e || isLocked)
                                     return callback(e ? e : Errors.Locked);
 
                                 pm.removeProperty(name, (e) => {
                                     if(!e)
-                                        fs.emit('property-remove', ctx, pPath, { name });
+                                        this.emit('property-remove', ctx, pPath, { name });
                                     callback(e);
                                 });
                             })
@@ -1569,7 +1567,7 @@ export abstract class FileSystem implements ISerializableFileSystem
                     },
                     getProperties(callback : ReturnCallback<PropertyBag>, byCopy ?: boolean) : void
                     {
-                        issuePrivilegeCheck(fs, ctx, pPath, 'canReadProperties', callback, () => {
+                        issuePrivilegeCheck(this, ctx, pPath, 'canReadProperties', callback, () => {
                             pm.getProperties((e, bag) => {
                                 if(!bag)
                                     return callback(e, bag);

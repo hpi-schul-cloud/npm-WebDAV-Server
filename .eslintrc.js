@@ -14,7 +14,8 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/ban-types': 'warn',
-        'no-constant-condition': ["error", { "checkLoops": false }]
+        'no-constant-condition': ["error", { "checkLoops": false }],
+        'no-empty': 'warn'
     },
     extends: [
         'eslint:recommended',
