@@ -12,8 +12,8 @@ const virtualFSManager = new VirtualFSManager();
 export class RootFSManager implements FSManager
 {
     uid  = 'RootFSManager_1.0.2';
-    
-    serialize(resource : any, obj : SerializedObject) : object
+
+    serialize(resource : any, obj : SerializedObject) : any
     {
         return {
             dateCreation: resource.dateCreation,

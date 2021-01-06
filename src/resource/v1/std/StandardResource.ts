@@ -34,11 +34,11 @@ export abstract class StandardResource implements IResource
     dateLastModified : number
     deleteOnMoved : boolean
     dateCreation : number
-    properties : object
+    properties : any
     fsManager : FSManager
     lockBag : LockBag
     parent : IResource
-    
+
     constructor(parent : IResource, fsManager : FSManager)
     {
         this.deleteOnMoved = true;
@@ -47,7 +47,7 @@ export abstract class StandardResource implements IResource
         this.fsManager = fsManager;
         this.lockBag = new LockBag();
         this.parent = parent;
-        
+
         this.dateLastModified = this.dateCreation;
     }
 
@@ -79,7 +79,7 @@ export abstract class StandardResource implements IResource
     {
         callback(null, this.lockBag.getLock(uuid));
     }
-    
+
     // ****************************** Properties ****************************** //
     setProperty(name : string, value : ResourcePropertyValue, callback : SimpleCallback)
     {
@@ -101,11 +101,11 @@ export abstract class StandardResource implements IResource
         this.updateLastModified();
         callback(null);
     }
-    getProperties(callback : ReturnCallback<object>)
+    getProperties(callback : ReturnCallback<any>)
     {
         callback(null, this.properties);
     }
-    
+
     // ****************************** Actions ****************************** //
     abstract create(callback : SimpleCallback)
     abstract delete(callback : SimpleCallback)
@@ -120,7 +120,7 @@ export abstract class StandardResource implements IResource
     abstract read(targetSource : boolean, callback : ReturnCallback<Readable>)
     abstract mimeType(targetSource : boolean, callback : ReturnCallback<string>)
     abstract size(targetSource : boolean, callback : ReturnCallback<number>)
-    
+
     // ****************************** Std meta-data ****************************** //
     creationDate(callback : ReturnCallback<number>)
     {
@@ -132,12 +132,12 @@ export abstract class StandardResource implements IResource
     }
     abstract webName(callback : ReturnCallback<string>)
     abstract type(callback : ReturnCallback<ResourceType>)
-    
+
     // ****************************** Children ****************************** //
     abstract addChild(resource : IResource, callback : SimpleCallback)
     abstract removeChild(resource : IResource, callback : SimpleCallback)
     abstract getChildren(callback : ReturnCallback<IResource[]>)
-    
+
     // ****************************** Gateway ****************************** //
     gateway?(arg : MethodCallArgs, path : FSPath, callback : (error : Error, resource ?: IResource) => void);
 
@@ -171,7 +171,7 @@ export abstract class StandardResource implements IResource
         parent.addChild(resource, (e) => {
             if(!e)
                 resource.parent = parent;
-            
+
             callback(e);
         });
     }
@@ -401,7 +401,7 @@ export abstract class StandardResource implements IResource
                     callback(e);
                     return;
                 }
-                
+
                 resource.webName((e, name) => {
                     if(e || name === newName)
                     {

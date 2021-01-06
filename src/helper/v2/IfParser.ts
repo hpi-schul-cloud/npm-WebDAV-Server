@@ -12,7 +12,7 @@ function NoLock()
         resource.lockManager((e, lm) => {
             if(e)
                 return callback(e, false);
-            
+
             lm.getLocks((e, locks) => {
                 callback(e, locks ? locks.length === 0 : false);
             })
@@ -26,7 +26,7 @@ function Token(token : string)
         resource.lockManager((e, lm) => {
             if(e)
                 return callback(e, false);
-            
+
             lm.getLock(token, (e, lock) => callback(e, !!lock && !e));
         })
     }
@@ -111,7 +111,7 @@ function parseInternal(group : string)
 
 export function extractOneToken(ifHeader : string)
 {
-    const match = /^\s*\(\s*<?([^\)\s>]+)>?\s*\)\s*$/.exec(ifHeader);
+    const match = /^\s*\(\s*<?([^)\s>]+)>?\s*\)\s*$/.exec(ifHeader);
     if(!match)
         return null;
     else
@@ -120,7 +120,7 @@ export function extractOneToken(ifHeader : string)
 
 export function parseIfHeader(ifHeader : string)
 {
-    const rex = /(?:<([^>]+)>)?\s*\(([^\)]+)\)/g;
+    const rex = /(?:<([^>]+)>)?\s*\(([^)]+)\)/g;
     let match = rex.exec(ifHeader);
 
     const orArray : {
@@ -133,7 +133,7 @@ export function parseIfHeader(ifHeader : string)
     {
         if(match[1])
             oldPath = url.parse(match[1]).path;
-        
+
         orArray.push({
             path: oldPath,
             actions: parseInternal(match[2])

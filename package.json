@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "prepare": "npm run build",
-    "dev": "cd src && tsc --declaration -w",
+    "dev": "tsc --declaration -w",
     "build": "tsc --declaration",
     "lint": "eslint . --ignore-path .gitignore --ext .ts",
     "lint-fix": "eslint . --fix --ignore-path .gitignore --ext .ts",

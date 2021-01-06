@@ -21,10 +21,10 @@ function standarizePath(path : string)
     while(rex.test(path))
         path = path.replace(rex, '/');
     path = path.replace(/\/$/g, '');
-    path = path.replace(/^([^\/])/g, '/$1');
+    path = path.replace(/^([^/])/g, '/$1');
     if(path.length === 0)
         path = '/';
-    
+
     return path;
 }
 
@@ -43,10 +43,10 @@ export class SimplePathPrivilegeManager extends PrivilegeManager
     {
         if(!user)
             throw Errors.IllegalArguments;
-        
+
         if(!this.rights[user.uid])
             this.rights[user.uid] = {};
-        
+
         const rs = rights as string[];
         if(rs.indexOf('canRead') !== -1)
         {
@@ -59,7 +59,7 @@ export class SimplePathPrivilegeManager extends PrivilegeManager
             rs.push('canReadContentTranslated');
             rs.push('canReadContentSource');
         }
-        
+
         if(rs.indexOf('canWrite') !== -1)
         {
             rs.push('canWriteLocks');
@@ -78,11 +78,11 @@ export class SimplePathPrivilegeManager extends PrivilegeManager
     {
         if(!user)
             return [];
-        
+
         const allRights = this.rights[user.uid];
         if(!allRights)
             return [];
-            
+
         path = standarizePath(path.toString());
 
         const rights = {};
@@ -102,7 +102,7 @@ export class SimplePathPrivilegeManager extends PrivilegeManager
     {
         if(!user)
             return callback(null, false);
-        
+
         const rights = this.getRights(user, fullPath.toString());
         const can = !!rights && rights.some((r) => r === 'all' || r === privilege);
         callback(null, can);

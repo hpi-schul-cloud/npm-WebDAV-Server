@@ -22,13 +22,13 @@ export interface IWrappableResource<T> extends IResource
     delete(callback : SimpleCallback, ctx ?: RequestContext, data ?: T)
     moveTo(parent : IResource, newName : string, overwrite : boolean, callback : SimpleCallback, ctx ?: RequestContext, data ?: T)
     rename(newName : string, callback : Return2Callback<string, string>, ctx ?: RequestContext, data ?: T)
-    
+
     // ****************************** Content ****************************** //
     write(targetSource : boolean, callback : ReturnCallback<Writable>, finalSize ?: number, ctx ?: RequestContext, data ?: T)
     read(targetSource : boolean, callback : ReturnCallback<Readable>, ctx ?: RequestContext, data ?: T)
     mimeType(targetSource : boolean, callback : ReturnCallback<string>, ctx ?: RequestContext, data ?: T)
     size(targetSource : boolean, callback : ReturnCallback<number>, ctx ?: RequestContext, data ?: T)
-    
+
     // ****************************** Locks ****************************** //
     getLocks(callback : ReturnCallback<Lock[]>, ctx ?: RequestContext, data ?: T)
     setLock(lock : Lock, callback : SimpleCallback, ctx ?: RequestContext, data ?: T)
@@ -45,15 +45,15 @@ export interface IWrappableResource<T> extends IResource
     setProperty(name : string, value : ResourcePropertyValue, callback : SimpleCallback, ctx ?: RequestContext, data ?: T)
     getProperty(name : string, callback : ReturnCallback<ResourcePropertyValue>, ctx ?: RequestContext, data ?: T)
     removeProperty(name : string, callback : SimpleCallback, ctx ?: RequestContext, data ?: T)
-    getProperties(callback : ReturnCallback<object>, ctx ?: RequestContext, data ?: T)
-    
+    getProperties(callback : ReturnCallback<any>, ctx ?: RequestContext, data ?: T)
+
     // ****************************** Std meta-data ****************************** //
     creationDate(callback : ReturnCallback<number>, ctx ?: RequestContext, data ?: T)
     lastModifiedDate(callback : ReturnCallback<number>, ctx ?: RequestContext, data ?: T)
     webName(callback : ReturnCallback<string>, ctx ?: RequestContext, data ?: T)
     displayName?(callback : ReturnCallback<string>, ctx ?: RequestContext, data ?: T)
     type(callback : ReturnCallback<ResourceType>, ctx ?: RequestContext, data ?: T)
-    
+
     // ****************************** Gateway ****************************** //
     gateway?(arg : RequestContext, path : FSPath, callback : (error : Error, resource ?: IResource) => void)
 }
@@ -82,7 +82,7 @@ export class SimpleResourceWrapper<T> implements IResource
     {
         return true;
     }
-    
+
     constructor(public resource : IWrappableResource<T>, public data ?: T)
     { }
 
@@ -91,13 +91,13 @@ export class SimpleResourceWrapper<T> implements IResource
     delete(callback : SimpleCallback) { this._invoke('delete', [ callback ]); }
     moveTo(parent : IResource, newName : string, overwrite : boolean, callback : SimpleCallback) { this._invoke('moveTo', [ parent, newName, overwrite, callback ]); }
     rename(newName : string, callback : Return2Callback<string, string>) { this._invoke('rename', [ newName, callback ]); }
-    
+
     // ****************************** Content ****************************** //
     write(targetSource : boolean, callback : ReturnCallback<Writable>, finalSize ?: number) { this._invoke('write', [ targetSource, callback, finalSize ]); }
     read(targetSource : boolean, callback : ReturnCallback<Readable>) { this._invoke('read', [ targetSource, callback ]); }
     mimeType(targetSource : boolean, callback : ReturnCallback<string>) { this._invoke('mimeType', [ targetSource, callback ]); }
     size(targetSource : boolean, callback : ReturnCallback<number>) { this._invoke('size', [ targetSource, callback ]); }
-    
+
     // ****************************** Locks ****************************** //
     getLocks(callback : ReturnCallback<Lock[]>) { this._invoke('getLocks', [ callback ]); }
     setLock(lock : Lock, callback : SimpleCallback) { this._invoke('setLock', [ lock, callback ]); }
@@ -114,8 +114,8 @@ export class SimpleResourceWrapper<T> implements IResource
     setProperty(name : string, value : ResourcePropertyValue, callback : SimpleCallback) { this._invoke('setProperty', [ name, value, callback ]); }
     getProperty(name : string, callback : ReturnCallback<ResourcePropertyValue>) { this._invoke('getProperty', [ name, callback ]); }
     removeProperty(name : string, callback : SimpleCallback) { this._invoke('removeProperty', [ name, callback ]); }
-    getProperties(callback : ReturnCallback<object>) { this._invoke('getProperties', [ callback ]); }
-    
+    getProperties(callback : ReturnCallback<any>) { this._invoke('getProperties', [ callback ]); }
+
     // ****************************** Std meta-data ****************************** //
     creationDate(callback : ReturnCallback<number>) { this._invoke('creationDate', [ callback ]); }
     lastModifiedDate(callback : ReturnCallback<number>) { this._invoke('lastModifiedDate', [ callback ]); }
@@ -128,7 +128,7 @@ export class SimpleResourceWrapper<T> implements IResource
         else
             this._invoke('webName', [ callback ]);
     }
-    
+
     // ****************************** Gateway ****************************** //
     get gateway()
     {

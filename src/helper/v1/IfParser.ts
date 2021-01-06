@@ -122,7 +122,7 @@ export function extractOneToken(ifHeader : string)
 
 export function parseIfHeader(ifHeader : string)
 {
-    const rex = /(?:<([^>]+)>)?\s*\(([^\)]+)\)/g;
+    const rex = /(?:<([^>]+)>)?\s*\(([^)]+)\)/g;
     let match = rex.exec(ifHeader);
 
     const orArray = [];
@@ -132,7 +132,7 @@ export function parseIfHeader(ifHeader : string)
     {
         if(match[1])
             oldPath = url.parse(match[1]).path;
-        
+
         orArray.push({
             path: oldPath,
             actions: parseInternal(match[2])

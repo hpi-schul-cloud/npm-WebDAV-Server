@@ -46,13 +46,13 @@ export interface IResource
     delete(callback : SimpleCallback, arg ?: RequestContext)
     moveTo(parent : IResource, newName : string, overwrite : boolean, callback : SimpleCallback, arg ?: RequestContext)
     rename(newName : string, callback : Return2Callback<string, string>, arg ?: RequestContext)
-    
+
     // ****************************** Content ****************************** //
     write(targetSource : boolean, callback : ReturnCallback<Writable>, finalSize ?: number, arg ?: RequestContext)
     read(targetSource : boolean, callback : ReturnCallback<Readable>, arg ?: RequestContext)
     mimeType(targetSource : boolean, callback : ReturnCallback<string>, arg ?: RequestContext)
     size(targetSource : boolean, callback : ReturnCallback<number>, arg ?: RequestContext)
-    
+
     // ****************************** Locks ****************************** //
     getLocks(callback : ReturnCallback<Lock[]>, arg ?: RequestContext)
     setLock(lock : Lock, callback : SimpleCallback, arg ?: RequestContext)
@@ -69,15 +69,15 @@ export interface IResource
     setProperty(name : string, value : ResourcePropertyValue, callback : SimpleCallback, arg ?: RequestContext)
     getProperty(name : string, callback : ReturnCallback<ResourcePropertyValue>, arg ?: RequestContext)
     removeProperty(name : string, callback : SimpleCallback, arg ?: RequestContext)
-    getProperties(callback : ReturnCallback<object>, arg ?: RequestContext)
-    
+    getProperties(callback : ReturnCallback<any>, arg ?: RequestContext)
+
     // ****************************** Std meta-data ****************************** //
     creationDate(callback : ReturnCallback<number>, arg ?: RequestContext)
     lastModifiedDate(callback : ReturnCallback<number>, arg ?: RequestContext)
     webName(callback : ReturnCallback<string>, arg ?: RequestContext)
     displayName?(callback : ReturnCallback<string>, arg ?: RequestContext)
     type(callback : ReturnCallback<ResourceType>, arg ?: RequestContext)
-    
+
     // ****************************** Gateway ****************************** //
     gateway?(arg : RequestContext, path : FSPath, callback : (error : Error, resource ?: IResource) => void)
 }

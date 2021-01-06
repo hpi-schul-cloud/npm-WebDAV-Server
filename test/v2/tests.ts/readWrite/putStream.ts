@@ -19,7 +19,7 @@ export default ((info, isValid) =>
             return cx.slice(index, index + size);
         }
     })
-    
+
     starter(server, info, isValid, 'NO CONTENT', (r) => {
         const reqStream = info.reqStream({
             url: 'http://localhost:' + info.port + '/file.txt',
@@ -30,9 +30,11 @@ export default ((info, isValid) =>
                 if(e) return isValid(false, 'Could not open the resource for reading.', e);
 
                 let data = '';
-                let tempData;
-                while(tempData = rStream.read(1000))
+                let tempData = rStream.read(1000);
+                while(tempData) {
                     data += tempData.toString();
+                    tempData = rStream.read(1000);
+                }
                 isValid(data === content, 'The content read is not the same as the one written : "' + data.substring(0, 20) + '[...]" but expected "' + content.substring(0, 20) + '[...]".');
             })
         });

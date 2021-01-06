@@ -11,7 +11,7 @@ import * as fs from 'fs'
 export interface IVirtualStoredContentManager
 {
     uid : string
-    
+
     initialize(callback : (error : Error) => void)
 
     read(contentUid : string, callback : ReturnCallback<Readable>)
@@ -95,7 +95,7 @@ export class SimpleVirtualStoredContentManager extends VirtualStoredContentManag
             process.nextTick(() => callback(null));
         })
     }
-    
+
     read(contentUid : string, _callback : ReturnCallback<Readable>)
     {
         const callback = (_1, _2) => process.nextTick(() => _callback(_1, _2));
@@ -131,7 +131,7 @@ export class SimpleVirtualStoredContentManager extends VirtualStoredContentManag
             }
         })
     }
-    
+
     deallocate(uid : string, callback : SimpleCallback)
     {
         fs.unlink(path.join(this.storeFolderPath, uid), callback);
@@ -143,7 +143,7 @@ export class SimpleVirtualStoredContentManager extends VirtualStoredContentManag
 
         if(!this.initialized)
             throw new Error('SimpleVirtualStoredContentManager not initialized');
-        
+
         const uid = (++this.cid).toString(16);
 
         fs.open(path.join(this.storeFolderPath, uid), 'w+', (e, fd) => {
@@ -173,7 +173,7 @@ export class VirtualStoredFSManager implements FSManager
         this.contentManager.initialize(callback);
     }
 
-    serialize(resource : any, obj : SerializedObject) : object
+    serialize(resource : any, obj : SerializedObject) : any
     {
         const result : any = {
             dateCreation: resource.dateCreation,

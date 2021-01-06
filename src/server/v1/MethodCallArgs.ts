@@ -21,7 +21,7 @@ export class MethodCallArgs
     uri : string
     resource : IResource
     resourceType : ResourceType
-    
+
     data : Buffer | Int8Array
     user : IUser
 
@@ -36,7 +36,7 @@ export class MethodCallArgs
         this.isSource = this.findHeader('source', 'F').toUpperCase() === 'T' || this.findHeader('translate', 'T').toUpperCase() === 'F';
         this.depth = parseInt(this.findHeader('Depth', '0'), 10);
         this.host = this.findHeader('Host');
-        
+
         this.uri = url.parse(request.url).pathname;
         this.path = new FSPath(this.uri);
     }
@@ -166,7 +166,7 @@ export class MethodCallArgs
                 this.exit();
                 return;
             }
-            
+
             callback();
         });
     }
@@ -219,7 +219,7 @@ export class MethodCallArgs
         for(const k in this.request.headers)
             if(k.replace(/(-| )/g, '').toLowerCase() === name)
                 return this.request.headers[k].toString();
-        
+
         return defaultValue;
     }
 
@@ -233,7 +233,7 @@ export class MethodCallArgs
         // Adding date
         const date = new Date(ticks);
         let result = date.toISOString().substring(0, '0000-00-00T00:00:00'.length);
-        
+
         // Adding timezone offset
         let offset = date.getTimezoneOffset();
         result += offset < 0 ? '-' : '+'
@@ -246,9 +246,9 @@ export class MethodCallArgs
         let m = (offset % 60).toString(10);
         while(m.length < 2)
             m = '0' + m;
-            
+
         result += h + ':' + m;
-        
+
         return result;
     }
 
@@ -272,7 +272,7 @@ export class MethodCallArgs
     {
         if(!uri)
             uri = this.uri;
-        
+
         return (this.prefixUri() + uri).replace(/([^:])\/\//g, '$1/');
     }
 
@@ -293,10 +293,10 @@ export class MethodCallArgs
             }))
     }
 
-    writeXML(xmlObject : XMLElement | object)
+    writeXML(xmlObject : XMLElement | any)
     {
         let content = XML.toXML(xmlObject);
-        
+
         switch(this.accept([ /[^a-z0-9A-Z]xml$/, /[^a-z0-9A-Z]json$/ ]))
         {
             default:
@@ -305,7 +305,7 @@ export class MethodCallArgs
                 this.response.setHeader('Content-Length', content.length.toString());
                 this.response.write(content);
                 break;
-                
+
             case 1: // json
                 content = XML.toJSON(content);
                 this.response.setHeader('Content-Type', 'application/json; charset="utf-8"');
@@ -314,7 +314,7 @@ export class MethodCallArgs
                 break;
         }
     }
-    
+
     setCode(code : number, message ?: string)
     {
         if(!message)

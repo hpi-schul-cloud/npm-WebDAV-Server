@@ -9,7 +9,7 @@ export class VirtualFSManager implements FSManager
 {
     uid  = 'VirtualFSManager_1.0.2';
 
-    serialize(resource : any, obj : SerializedObject) : object
+    serialize(resource : any, obj : SerializedObject) : any
     {
         const result : any = {
             dateCreation: resource.dateCreation,

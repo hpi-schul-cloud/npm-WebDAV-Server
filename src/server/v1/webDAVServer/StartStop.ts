@@ -27,7 +27,7 @@ function autoSave(options : IAutoSave)
             case 'MOVE':
             case 'COPY':
             case 'POST':
-            case 'PUT':
+            case 'PUT': {
                 // Avoid concurrent saving
                 if(saving)
                 {
@@ -94,7 +94,8 @@ function autoSave(options : IAutoSave)
                 }
                 save.bind(this)();
                 break;
-            
+            }
+
             default:
                 next();
                 break;
@@ -173,10 +174,10 @@ export function start(port ?: number | WebDAVServerStartCallback, callback ?: We
                         req.on('data', (chunk) => {
                             if(chunk.constructor === String)
                                 chunk = Buffer.from(chunk as string);
-                            
+
                             for(let i = 0; i < chunk.length && index < data.length; ++i, ++index)
                                 data[index] = (chunk as Buffer)[i];
-                            
+
                             if(index >= base.contentLength)
                             {
                                 base.data = data;
