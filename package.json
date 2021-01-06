@@ -32,7 +32,6 @@
 	},
 	"name": "@hpi-schul-cloud/webdav-server",
 	"version": "2.7.0",
-	"author": "Adrien Castex <adrien.castex@protonmail.com>",
 	"license": "Unlicense",
 	"homepage": "https://github.com/hpi-schul-cloud/npm-WebDAV-Server",
 	"repository": {

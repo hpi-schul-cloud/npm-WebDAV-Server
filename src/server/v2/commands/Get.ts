@@ -64,9 +64,9 @@ export interface IRange {
 }
 
 export function parseRangeHeader(mimeType: string, size: number, range: string) {
-	const separator = Array.apply(null, { length: 20 })
-		.map(() => String.fromCharCode('a'.charCodeAt(0) + Math.floor(Math.random() * 26)))
-		.join('');
+	const separator = Array.from({ length: 20 }, () =>
+		String.fromCharCode('a'.charCodeAt(0) + Math.floor(Math.random() * 26))
+	).join('');
 
 	const createMultipart = (range: IRange) =>
 		`--${separator}\r\nContent-Type: ${mimeType}\r\nContent-Range: bytes ${range.min}-${range.max}/*\r\n\r\n`;
